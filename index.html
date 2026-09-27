@@ -151,6 +151,12 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
 
 
+/* v0.2.3 처리 기록 */
+.hist{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+.hlist{list-style:none;margin:6px 0 0;padding:0;font-size:13px}
+.hlist li{padding:4px 0;border-left:2px solid var(--gold2);padding-left:10px;margin-left:4px}
+.hlist .hat{font-family:var(--mono);color:var(--muted);margin-right:8px}
+.hlist small{display:block;color:var(--muted);font-size:12px}
 /* v0.2 주문 현황 */
 .flow{display:flex;align-items:stretch;gap:6px;margin:0 0 12px;overflow-x:auto;padding-bottom:2px}
 .stg{flex:1;min-width:108px;display:flex;flex-direction:column;align-items:flex-start;gap:0;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 14px;cursor:pointer;text-align:left}
@@ -270,11 +276,12 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
     <!-- 문의 -->
     <section id="t-ask" class="hidden">
       <div class="bar"><h2>문의</h2><span class="sp"></span><button class="btn ghost" type="button" onclick="loadAsks()">새로 고침</button></div>
-      <p class="note">답변은 고객에게 <b>자동으로 가지 않습니다</b>. 전화·문자로 답하신 뒤, 무엇을 안내했는지 적어 두세요. 적은 내용은 지우지 않고 이어서 쌓입니다.</p>
+      <p class="note">적은 답변은 고객이 <b>watervis.co.kr/order «주문 조회»</b>에서 <b>문의번호 + 연락처</b>로 볼 수 있습니다 (담당자 이름은 안 보임). 알림이 가지는 않으니 급한 것은 전화·문자로 알려 주세요.<br>
+        직원끼리만 볼 것은 <b>«내부 메모»</b>에 체크하세요. 적은 내용은 지우지 않고 이어서 쌓입니다.</p>
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스 직원 업무 v0.2.1 · 문의 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스 직원 업무 v0.2.3 · 문의 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -286,7 +293,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · 서버: 주문원장 Apps Script (v0.6.0 부터 ops… 요청)
    · 로그인 토큰은 이 탭의 메모리에만 둔다. 30분 동안 조작이 없으면 스스로 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.2.1';
+const VERSION='ops-v0.2.3';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -375,7 +382,7 @@ async function loadBoard(quiet){
   if(boardBusy) return; boardBusy=true;
   if(!quiet&&tab==='orders'&&!O.length) $('oBody').innerHTML='<p class="load">불러오는 중…</p>';
   try{
-    const r=await api('opsBoard'); T.user=r.user||T.user; O=r.orders||[];
+    const r=await api('opsBoard'); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
     setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders();
   }catch(e){ showErr(e.message); }
   finally{ boardBusy=false; }
@@ -410,7 +417,7 @@ function newCard(o,P){ const age=daysAgo(o.date);
     +'<dt>내용</dt><dd>'+o.qty+'박스 · '+o.dests.length+'곳'+(o.dests.some(d=>d.ship==='방문수령')?' (방문 수령 포함)':'')+'</dd>'
     +(o.cash?'<dt>현금영수증</dt><dd class="tel">'+esc(o.cash)+'</dd>':'')+'</dl>'
     +'<div class="cbtn">'+(P.pay?'<button class="btn pri" type="button" data-pay="'+esc(o.orderNo)+'">입금 확인</button>':'')
-    +'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div></div>'; }
+    +'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div>'+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
 const SHIPL={'택배':'택배','방문수령':'공장 방문 수령','현장전달':'방문객 현장 전달','직접전달':'직접 전달','사내비치':'냉장고 채우기'};
 function shipCard(o,P){
   const cx=stage==='취소', ds=cx?o.dests:destsIn(o,stage);
@@ -421,7 +428,7 @@ function shipCard(o,P){
     +(o.free&&o.purpose?'<p class="purpose">목적: '+esc(o.purpose)+'</p>':'');
   if(cx){ const c=o.cancel||{}, wait=o.status==='취소접수';
     return head+'<p class="purpose"><span class="st '+(wait?'wait':'no')+'">'+(wait?'취소접수 · 환불 대기':'취소완료')+'</span> '+esc(c.reason||'')+' <span class="meta">'+esc((c.at||'').slice(5,16))+' '+esc(c.by||'')+'</span></p>'
-      +(wait?'<p class="meta" style="margin:0 0 8px">'+esc(o.payer)+' 님께 <b>'+won(o.total)+'</b> 환불 ('+telA(o.payerTel)+')</p>'+(P.pay?'<button class="btn pri" type="button" data-refund="'+esc(o.orderNo)+'">환불 완료</button>':''):'')+'</div>'; }
+      +(wait?'<p class="meta" style="margin:0 0 8px">'+esc(o.payer)+' 님께 <b>'+won(o.total)+'</b> 환불 ('+telA(o.payerTel)+')</p>'+(P.pay?'<button class="btn pri" type="button" data-refund="'+esc(o.orderNo)+'">환불 완료</button>':''):'')+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
   const rows=ds.map(d=>{ const i=o.dests.indexOf(d), parcel=d.ship==='택배';
     const who=(o.free&&d.to&&d.to!==d.rcv?esc(d.to)+' · ':'')+'<b>'+esc(d.rcv)+'</b> '+telA(d.tel);
     const where=parcel?'<div class="addr">'+(d.zip?'('+esc(d.zip)+') ':'')+esc(d.addr)+(d.memo?'<small>요청: '+esc(d.memo)+'</small>':'')+'</div>'+(stage==='확인'?'<button type="button" class="link" data-copy="'+esc(o.orderNo)+'|'+i+'">받는 분·주소 복사</button>':'')
@@ -442,7 +449,7 @@ function shipCard(o,P){
     return '<tr><td><span class="dn">'+(i+1)+'</span></td><td>'+who+'</td><td>'+where+'</td><td class="num">'+d.qty+esc(d.unit)+'</td><td>'+act+'<div class="meta mq">'+d.qty+esc(d.unit)+'</div></td></tr>'; }).join('');
   const canCancel=(stage==='확인'||stage==='대기')&&!o.dests.some(d=>d.stage==='완료')&&(P.pay||P.ship);
   return head+'<table class="dtable"><thead><tr><th></th><th>받는 분</th><th>주소·방법</th><th class="num">수량</th><th>처리</th></tr></thead><tbody>'+rows+'</tbody></table>'
-    +(canCancel?'<div class="cbtn r"><button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div>':'')+'</div>';
+    +(canCancel?'<div class="cbtn r"><button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div>':'')+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>';
 }
 function findDest(rowId){ for(const o of O){ const d=o.dests.find(x=>x.rowId===rowId); if(d) return {o,d}; } return null; }
 async function saveWb(rowId,fix){
@@ -454,8 +461,9 @@ async function saveWb(rowId,fix){
 }
 $('oBody').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.dataset.wb){ e.preventDefault(); saveWb(e.target.dataset.wb, e.target.dataset.fix==='1'); } });
 $('oBody').addEventListener('click',async e=>{
-  const t=e.target.closest('[data-pay],[data-cancel],[data-refund],[data-save],[data-hand],[data-fix],[data-picked],[data-copy]'); if(!t) return;
+  const t=e.target.closest('[data-pay],[data-cancel],[data-refund],[data-save],[data-hand],[data-fix],[data-picked],[data-copy],[data-hist]'); if(!t) return;
   const D=t.dataset;
+  if(D.hist){ return toggleHist(t, D.hist); }
   if(D.pay){ const o=O.find(x=>x.orderNo===D.pay); if(!o) return;
     return modal('<h3>통장에서 확인하셨나요?</h3><div class="big">'+esc(o.payer)+' <small>님</small></div><div class="big">'+won(o.total)+'</div>'
       +'<p>주문 '+esc(o.orderNo)+' · '+o.qty+'박스</p><p class="mnote">이름과 금액이 통장과 <b>둘 다</b> 맞을 때만 누르세요. 누르면 «주문확인»으로 넘어갑니다.</p>'
@@ -486,6 +494,20 @@ $('oBody').addEventListener('click',async e=>{
     const txt=d.rcv+'\t'+fmtTel(d.tel)+'\t'+(d.zip?d.zip+'\t':'')+d.addr+(d.memo?'\t'+d.memo:'');
     try{ await navigator.clipboard.writeText(txt); toast('복사했습니다 — 한진 프로그램에 붙여 넣으세요.'); }catch(_){ toast(txt); } }
 });
+/* 처리 기록 — 누를 때만 서버에서 그 주문 하나를 찾는다 (평소엔 접혀 있음) */
+const HIST={};
+async function toggleHist(btn,no){
+  const box=btn.nextElementSibling;
+  if(!box.classList.contains('hidden')){ box.classList.add('hidden'); btn.textContent='처리 기록 ▾'; return; }
+  box.classList.remove('hidden'); btn.textContent='처리 기록 ▴';
+  if(HIST[no]){ box.innerHTML=HIST[no]; return; }
+  box.innerHTML='<p class="meta">불러오는 중…</p>';
+  try{ const r=await api('opsHistory',{orderNo:no});
+    HIST[no]=r.history.length?'<ol class="hlist">'+r.history.map(h=>'<li><span class="hat">'+esc(h.at.slice(5))+'</span><b>'+esc(h.what)+'</b>'+(h.dest?' <span class="meta">'+esc(h.dest)+'번 곳</span>':'')
+      +' · '+esc(h.who)+(h.detail?'<small>'+esc(h.detail)+'</small>':'')+'</li>').join('')+'</ol>':'<p class="meta">기록이 없습니다.</p>';
+    box.innerHTML=HIST[no]; }
+  catch(e){ box.innerHTML='<p class="meta">'+esc(e.message)+'</p>'; }
+}
 /* 한진 자동 조회 상태 */
 function paintTrack(t){
   const el=$('trackBar');
@@ -551,7 +573,7 @@ function askCard(a,open){
     +'<div class="qbody">'+esc(a.body)+'</div>'
     +(a.photos.length?'<div style="margin:-4px 0 10px">'+a.photos.map((p,i)=>'<a href="'+esc(p)+'" target="_blank" rel="noopener">사진 '+(i+1)+'</a>').join(' · ')+' <span class="meta">(드라이브 권한이 있어야 열립니다)</span></div>':'')
     +(a.answer?'<div class="qans">'+esc(a.answer)+'</div>':'')
-    +(open?'<textarea class="qta" placeholder="무엇을 안내했는지 적어 주세요. 예: 전화로 내일 도착 안내함"></textarea><div class="qbtns"><button class="btn ghost" type="button" data-qs="처리중">처리 중으로 저장</button><button class="btn pri" type="button" data-qs="완료">답변 완료</button></div>':'')
+    +(open?'<textarea class="qta" placeholder="고객에게 보일 답변을 적어 주세요. 예: 내일(9/29) 도착 예정입니다. 불편을 드려 죄송합니다."></textarea><div class="qbtns"><label class="mchk" style="margin:0 auto 0 0"><input type="checkbox" data-int> 내부 메모 (고객에게 안 보임)</label><button class="btn ghost" type="button" data-qs="처리중">처리 중으로 저장</button><button class="btn pri" type="button" data-qs="완료">답변 완료</button></div>':'')
     +'</div>';
 }
 function paintAsks(){
@@ -563,7 +585,8 @@ $('qBody').addEventListener('click',async e=>{
   const c=b.closest('[data-ask]'), ta=c.querySelector('.qta'), ans=ta.value.trim();
   if(ans.length<2){ toast('무엇을 안내했는지 적어 주세요.'); ta.focus(); return; }
   c.querySelectorAll('button').forEach(x=>x.disabled=true);
-  try{ await api('opsAskReply',{askNo:c.dataset.ask, answer:ans, status:b.dataset.qs}); toast('저장했습니다.'); await loadAsks(); }
+  const internal=!!(c.querySelector('[data-int]')||{}).checked;
+  try{ await api('opsAskReply',{askNo:c.dataset.ask, answer:ans, status:b.dataset.qs, internal}); toast(internal?'내부 메모를 저장했습니다.':'저장했습니다 — 고객이 «주문 조회»에서 문의번호로 볼 수 있습니다.'); await loadAsks(); }
   catch(err){ toast(err.message); c.querySelectorAll('button').forEach(x=>x.disabled=false); }
 });
 
