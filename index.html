@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#061a33">
+<title>워터비스 직원 업무</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+:root{
+  --navy:#061a33; --navy2:#0b2a52; --deep:#03101f; --sky:#e9f3fb;
+  --gold:#c9a45c; --gold2:#e6cf9a; --ink:#16202c; --muted:#6a7584; --line:#e3e8ee;
+  --paper:#f5f7fa; --card:#fff; --ok:#1f7a55; --okbg:#e3f3ea; --bad:#b83a3a; --badbg:#fbe4e4; --warn:#8a5a00; --warnbg:#fff1d6;
+  --sans:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+.hidden{display:none!important}
+a{color:var(--navy2)}
+
+/* 로그인 */
+#gate,#pwchg{min-height:100svh;display:grid;place-items:center;padding:32px 20px;background:radial-gradient(120% 80% at 50% 0%,#12396b 0%,var(--navy) 55%,var(--deep) 100%);color:#fff;text-align:center}
+.glogo{width:200px;height:auto;margin:0 auto 10px;display:block}
+.gtitle{font-size:24px;font-weight:800;margin:4px 0 2px}
+.gsub{color:#b9c7d8;font-size:14px;margin:0 0 24px}
+.lbox{width:100%;max-width:320px;margin:0 auto;display:grid;gap:10px}
+.lbox input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(230,207,154,.45);border-radius:10px;padding:13px 14px;color:#fff;font-size:16px}
+.lbox input::placeholder{color:#8ea3bd}
+.lbox input:focus{outline:none;border-color:var(--gold2);background:rgba(255,255,255,.12)}
+.gbtn{border:0;border-radius:10px;padding:14px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1d05;font-weight:800;font-size:16px;cursor:pointer}
+.gbtn:disabled{opacity:.6}
+.gmsg{min-height:22px;margin-top:12px;font-size:13.5px;color:#f1c7c7;max-width:340px;margin-left:auto;margin-right:auto}
+.gnote{margin-top:26px;font-size:12.5px;color:#7f95b1}
+.pwrules{font-size:12.5px;color:#9fb3cb;text-align:left;margin:0;padding-left:18px}
+
+/* 머리 */
+.top{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(3,16,31,.25)}
+.topin{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.topin img{height:22px;width:auto}
+.topin .brand{font-weight:800;letter-spacing:.02em;font-size:15px;white-space:nowrap}
+.topin .brand small{font-weight:500;color:var(--gold2);margin-left:6px;font-size:12.5px}
+.topin .sp{flex:1}
+.topin .who{font-size:13.5px;color:#cfe0f2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topin .out{background:transparent;border:1px solid rgba(230,207,154,.5);color:#fff;border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.tabs{max-width:1180px;margin:0 auto;display:flex;gap:2px;padding:0 10px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:none;border:0;color:#b9c7d8;padding:10px 14px 12px;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+.tabs button.on{color:#fff;border-bottom-color:var(--gold)}
+.tabs .cnt{display:inline-block;min-width:20px;text-align:center;background:var(--bad);color:#fff;border-radius:99px;padding:0 7px;font-size:12px;margin-left:5px;line-height:19px}
+.tabs .cnt.zero{background:rgba(255,255,255,.18);color:#cfe0f2}
+
+main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}
+.bar h2{font-size:20px;margin:0 8px 0 0;color:var(--navy)}
+.bar .sp{flex:1}
+.search{border:1px solid #d6dde6;border-radius:10px;padding:9px 12px;background:#fff;min-width:0;width:220px;font-size:15px}
+.chip{border:1px solid #d6dde6;background:#fff;border-radius:99px;padding:7px 13px;font-size:14px;cursor:pointer;color:#3b4b5e}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+.btn{border:1px solid var(--navy2);background:#fff;color:var(--navy2);border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));border:0;color:#2a1d05}
+.btn.ghost{border-color:#d6dde6;color:#3b4b5e;font-weight:600}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;color:#4b5868;margin:0 0 14px}
+.note b{color:var(--navy)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;background:#fff;border:1px dashed var(--line);border-radius:14px}
+.err{color:var(--bad);font-size:14px;margin:0 0 12px}
+.load{color:var(--muted);padding:30px 0;text-align:center}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.chead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;margin-bottom:8px}
+.no{font-family:var(--mono);font-weight:700;color:var(--navy);font-size:15px}
+.meta{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:1px 9px;background:var(--sky);color:var(--navy2)}
+.tag.f{background:#f3ecdc;color:#7a5a1a}
+.tag.m{background:#ece6f7;color:#4d3a7a}
+.st{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:1px 9px}
+.st.ok{background:var(--okbg);color:var(--ok)} .st.wait{background:var(--warnbg);color:var(--warn)} .st.no{background:var(--badbg);color:var(--bad)}
+.tel{font-family:var(--mono);white-space:nowrap}
+
+/* 입금 */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;margin:0}
+.pmain{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:2px 0 8px}
+.pname{font-size:22px;font-weight:800;color:var(--navy)}
+.pamt{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--navy);white-space:nowrap}
+.pdl{display:grid;grid-template-columns:74px 1fr;gap:3px 8px;font-size:13.5px;margin:0 0 12px;flex:1}
+.pdl dt{color:var(--muted)} .pdl dd{margin:0}
+.age{font-size:12px;font-weight:700;color:var(--bad)}
+
+/* 출고 */
+.dtable{width:100%;border-collapse:collapse;font-size:14px}
+.dtable{table-layout:fixed}
+.dtable th:nth-child(1){width:36px}.dtable th:nth-child(2){width:24%}.dtable th:nth-child(4){width:72px}.dtable th:nth-child(5){width:250px}
+.dtable th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.dtable td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.dtable tr:last-child td{border-bottom:0}
+.dtable tr.done td{background:#fafcfb}
+.dn{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700}
+.addr{font-size:13.5px}
+.addr small{display:block;color:var(--muted)}
+.wbin{display:flex;gap:6px;align-items:center}
+.wbin input{width:150px;border:1px solid #d6dde6;border-radius:9px;padding:8px 10px;font-family:var(--mono);font-size:15px}
+.wbin input:focus{outline:none;border-color:var(--navy2);box-shadow:0 0 0 3px rgba(11,42,82,.08)}
+.wbdone{font-family:var(--mono);font-weight:700;color:var(--ok)}
+.wbdone small{display:block;font-family:var(--sans);font-weight:400;color:var(--muted);font-size:12px}
+.mq{display:none}
+.link{background:none;border:0;color:var(--navy2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:13px;padding:2px 0}
+.purpose{font-size:13.5px;color:#3b4b5e;margin:0 0 8px}
+
+/* 현황 */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:0 0 16px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tile span{display:block;font-size:12.5px;color:var(--muted)}
+.tile b{font-size:22px;color:var(--navy);font-family:var(--mono)}
+.tile b small{font-family:var(--sans);font-size:13px;font-weight:600;margin-left:2px}
+.tile em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.h3{font-size:16px;color:var(--navy);margin:20px 0 10px;font-weight:800}
+.rtable{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px}
+.rtable th{text-align:left;background:#f7f9fb;color:#4b5868;font-weight:600;font-size:12.5px;padding:8px 10px;white-space:nowrap}
+.rtable td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+.rtable td.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+.rtable small{color:var(--muted);display:block;font-size:12.5px}
+select.inp{border:1px solid #d6dde6;border-radius:10px;padding:8px 10px;background:#fff;font-size:15px}
+
+/* 문의 */
+.qbody{white-space:pre-wrap;background:#f7f9fb;border-radius:10px;padding:10px 12px;margin:6px 0 10px;font-size:14.5px}
+.qans{white-space:pre-wrap;font-size:13.5px;color:#3b4b5e;border-left:3px solid var(--gold2);padding:4px 10px;margin:0 0 10px}
+.qta{width:100%;border:1px solid #d6dde6;border-radius:10px;padding:10px 12px;font-size:15px;min-height:70px;resize:vertical}
+.qta:focus{outline:none;border-color:var(--navy2);box-shadow:0 0 0 3px rgba(11,42,82,.08)}
+.qbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+details.more{margin-top:20px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8px 0}
+
+/* 확인창 */
+#modal{position:fixed;inset:0;z-index:50;background:rgba(3,16,31,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.mbox{background:#fff;border-radius:18px;width:100%;max-width:440px;padding:22px 20px 18px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.mbox h3{margin:0 0 10px;color:var(--navy);font-size:19px}
+.mbox .big{font-size:26px;font-weight:800;color:var(--navy);margin:6px 0}
+.mbox .big small{font-size:15px;color:var(--muted);font-weight:500}
+.mbox p{margin:6px 0;color:#3b4b5e;font-size:14.5px}
+.mbox input{width:100%;border:1px solid #d6dde6;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:15px}
+.mbtns{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:16px}
+.mbtns button{border-radius:12px;padding:13px;font-weight:800;font-size:15.5px;cursor:pointer}
+.mbtns .no{border:1px solid var(--line);background:#fff;color:var(--navy)}
+.mbtns .yes{border:0;background:var(--navy);color:#fff}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:60;box-shadow:0 8px 22px rgba(0,0,0,.2);max-width:90vw}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+
+
+/* v0.2 주문 현황 */
+.flow{display:flex;align-items:stretch;gap:6px;margin:0 0 12px;overflow-x:auto;padding-bottom:2px}
+.stg{flex:1;min-width:108px;display:flex;flex-direction:column;align-items:flex-start;gap:0;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 14px;cursor:pointer;text-align:left}
+.stg span{font-size:13.5px;color:#4b5868;font-weight:600}
+.stg b{font-size:26px;font-family:var(--mono);color:var(--navy);line-height:1.2}
+.stg small{font-size:12px;color:var(--muted)}
+.stg small.hot{color:var(--bad);font-weight:700}
+.stg.on{background:var(--navy);border-color:var(--navy)}
+.stg.on span,.stg.on small{color:#cfe0f2} .stg.on b{color:#fff}
+.stg.cx{flex:.8}
+.arr{align-self:center;color:#9aa4b1;font-size:20px}
+.gap{width:10px}
+.hint{font-size:14px;color:#4b5868}
+.trackrow{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.track{margin:0;font-size:13px;color:var(--muted);flex:1}
+.track.bad{color:var(--bad)}
+.cbtn{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cbtn.r{justify-content:flex-end;margin-top:8px}
+.btn.sm{padding:6px 11px;font-size:13px}
+.wbdone.wait{color:var(--warn)}
+.mnote{font-size:13px!important;color:var(--muted)!important}
+.mnote.warn{color:var(--bad)!important}
+.mchk{display:flex;gap:8px;align-items:center;font-size:14px;margin-top:8px}
+.mchk input{width:18px;height:18px;margin:0}
+@media (max-width:720px){ .flow{display:grid;grid-template-columns:repeat(3,1fr);overflow:visible} .stg{min-width:0;padding:8px 10px} .stg b{font-size:22px} .arr,.gap{display:none} }
+@media (max-width:720px){
+  .topin .brand small{display:none}
+  .search{width:100%;order:9}
+  .dtable{table-layout:auto}
+  .dtable thead{display:none}
+  .dtable,.dtable tbody,.dtable tr,.dtable td{display:block;width:100%}
+  .dtable tr{border-bottom:1px solid var(--line);padding:8px 0}
+  .dtable td{border:0;padding:3px 0}
+  .dtable td.num{display:none}
+  .mq{display:block}
+  .wbin input{flex:1;width:auto}
+  .rtable.wide thead{display:none}
+  .rtable.wide,.rtable.wide tbody,.rtable.wide tr,.rtable.wide td{display:block;width:100%}
+  .rtable.wide tr{border-top:1px solid var(--line);padding:6px 0}
+  .rtable.wide td{border:0;padding:2px 12px}
+  .rtable.wide td.n{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- ═════ 로그인 ═════ -->
+<section id="gate">
+  <div style="width:100%">
+    <img class="glogo" src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="WATERVIS" onerror="this.remove()">
+    <div class="gtitle">직원 업무</div>
+    <p class="gsub">임직원 주문과 같은 휴대폰 번호·비밀번호로 로그인합니다.</p>
+    <form class="lbox" id="loginForm" onsubmit="return false">
+      <input id="lid" type="tel" inputmode="numeric" autocomplete="username" placeholder="휴대폰 번호" maxlength="13">
+      <input id="lpw" type="password" autocomplete="current-password" placeholder="비밀번호" maxlength="64">
+      <button class="gbtn" id="loginBtn" type="submit">로그인</button>
+    </form>
+    <div class="gmsg" id="gateMsg"></div>
+    <div class="gnote">워터비스 직원 전용 화면입니다. 고객 정보가 들어 있으니 다 쓰면 꼭 로그아웃해 주세요.<br>계정 문의 010-2791-1239</div>
+  </div>
+</section>
+
+<!-- ═════ 새 비밀번호 ═════ -->
+<section id="pwchg" class="hidden">
+  <div style="width:100%">
+    <div class="gtitle">새 비밀번호 정하기</div>
+    <p class="gsub">처음 로그인하셨습니다. 본인만 아는 비밀번호로 바꿔 주세요.<br>(임직원 주문 화면도 같은 비밀번호로 바뀝니다)</p>
+    <form class="lbox" id="pwForm" onsubmit="return false">
+      <input type="text" autocomplete="username" id="pwUser" hidden>
+      <input id="pwOld" type="password" placeholder="지금 비밀번호 (임시 비밀번호)" autocomplete="current-password" maxlength="64">
+      <input id="pwNew" type="password" placeholder="새 비밀번호" autocomplete="new-password" maxlength="64">
+      <input id="pwNew2" type="password" placeholder="새 비밀번호 한 번 더" autocomplete="new-password" maxlength="64">
+      <ul class="pwrules"><li>8자 이상, 영문과 숫자를 섞어서</li><li>휴대폰 번호 뒷자리·1234 같은 쉬운 조합은 안 됩니다</li></ul>
+      <button class="gbtn" id="pwBtn" type="submit">비밀번호 바꾸기</button>
+    </form>
+    <div class="gmsg" id="pwMsg"></div>
+  </div>
+</section>
+
+<!-- ═════ 업무 ═════ -->
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="topin">
+      <img src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="" onerror="this.remove()">
+      <span class="brand">직원 업무<small>ops.watervis.co.kr</small></span>
+      <span class="sp"></span>
+      <span class="who" id="who"></span>
+      <button class="out" type="button" onclick="logout()">로그아웃</button>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button type="button" data-t="orders" class="hidden">주문 현황<span class="cnt zero" id="cOrd">0</span></button>
+      <button type="button" data-t="report">출고 현황 (월별)</button>
+      <button type="button" data-t="ask" class="hidden">문의<span class="cnt zero" id="cAsk">0</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <p class="err hidden" id="err"></p>
+
+    <!-- 주문 현황 -->
+    <section id="t-orders" class="hidden">
+      <div class="flow" id="flow"></div>
+      <div class="bar"><span class="hint" id="oHint"></span><span class="sp"></span><input class="search" id="oSearch" placeholder="이름·주문번호·금액·송장으로 찾기">
+        <button class="btn ghost" type="button" onclick="loadBoard()">새로 고침</button></div>
+      <div id="oBody"><p class="load">불러오는 중…</p></div>
+      <div class="trackrow"><p class="track" id="trackBar"></p><button class="btn ghost sm hidden" type="button" id="trackNow">지금 한진 조회</button></div>
+    </section>
+
+    <!-- 출고 현황 (모두) -->
+    <section id="t-report" class="hidden">
+      <div class="bar"><h2>출고 현황</h2><select class="inp" id="rMonth"></select><span class="sp"></span>
+        <button class="btn ghost" type="button" id="rCsv">엑셀로 내려받기 (회사 출고)</button>
+        <button class="btn ghost" type="button" onclick="loadReport()">새로 고침</button></div>
+      <div id="rBody"><p class="load">불러오는 중…</p></div>
+    </section>
+
+    <!-- 문의 -->
+    <section id="t-ask" class="hidden">
+      <div class="bar"><h2>문의</h2><span class="sp"></span><button class="btn ghost" type="button" onclick="loadAsks()">새로 고침</button></div>
+      <p class="note">답변은 고객에게 <b>자동으로 가지 않습니다</b>. 전화·문자로 답하신 뒤, 무엇을 안내했는지 적어 두세요. 적은 내용은 지우지 않고 이어서 쌓입니다.</p>
+      <div id="qBody"></div>
+    </section>
+
+    <p class="foot">워터비스 직원 업무 v0.2.1 · 문의 033-672-1032 · admin@watervis.co.kr</p>
+  </main>
+</div>
+
+<div id="modal" class="hidden" role="dialog"><div class="mbox" id="mbox"></div></div>
+
+<script>
+/* 워터비스 직원 업무(OPS) v0.2 — 2026-09-27 · 주문 현황(신규주문→주문확인→출고대기→출고완료·취소), 한진 자동 조회 표시
+   v0.1 — 2026-09-27
+   · 서버: 주문원장 Apps Script (v0.6.0 부터 ops… 요청)
+   · 로그인 토큰은 이 탭의 메모리에만 둔다. 30분 동안 조작이 없으면 스스로 로그아웃
+   · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
+const VERSION='ops-v0.2.1';
+const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
+const IDLE_MS=30*60*1000;
+const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const won=n=>Number(n||0).toLocaleString('ko-KR')+'원';
+const fmtTel=v=>{v=String(v||'').replace(/\D/g,'').slice(0,11);return v.length<4?v:v.length<8?v.slice(0,3)+'-'+v.slice(3):v.slice(0,3)+'-'+v.slice(3,v.length-4)+'-'+v.slice(-4);};
+const telA=t=>t?'<a class="tel" href="tel:'+esc(String(t).replace(/\D/g,''))+'">'+esc(fmtTel(t))+'</a>':'';
+const T={token:null,user:null};
+const B={pay:[],ship:[],askOpen:0};
+let tab='report', lastAct=Date.now();
+
+async function api(action,payload){
+  const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,token:T.token,client:VERSION},payload||{}))});
+  const j=await r.json();
+  if(!j.ok){
+    if(j.relogin&&T.token){ logout('expired'); throw new Error('다시 로그인해 주세요'); }
+    if(j.mustChange){ showPw(); }
+    throw new Error(j.error||'잠시 후 다시 시도해 주세요');
+  }
+  return j;
+}
+function toast(m){ let t=document.querySelector('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); } t.textContent=m; clearTimeout(toast.t); toast.t=setTimeout(()=>t.remove(),3200); }
+function showErr(m){ $('err').textContent=m||''; $('err').classList.toggle('hidden',!m); }
+function screen(id){ ['gate','pwchg','app'].forEach(x=>$(x).classList.toggle('hidden',x!==id)); window.scrollTo(0,0); }
+
+/* ── 로그인 ── */
+$('lid').addEventListener('input',e=>e.target.value=fmtTel(e.target.value));
+$('loginBtn').onclick=async()=>{
+  const id=$('lid').value.replace(/\D/g,''), pw=$('lpw').value;
+  if(id.length<10||!pw){ $('gateMsg').textContent='휴대폰 번호와 비밀번호를 넣어 주세요.'; return; }
+  $('loginBtn').disabled=true; $('loginBtn').textContent='확인 중…'; $('gateMsg').textContent='';
+  const slow=setTimeout(()=>{ $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='서버 응답을 기다리는 중입니다. 보통 5~15초 걸립니다.'; },3000);
+  try{
+    const r=await api('staffLogin',{id,pw});
+    T.token=r.token; T.user=r.user; lastAct=Date.now(); $('lpw').value='';
+    if(r.mustChange){ $('pwOld').value=pw; showPw(); } else enter();
+  }catch(e){ $('gateMsg').style.color=''; $('gateMsg').textContent=e.message; $('lpw').value=''; }
+  finally{ clearTimeout(slow); $('loginBtn').disabled=false; $('loginBtn').textContent='로그인'; if(T.token) $('gateMsg').textContent=''; }
+};
+function showPw(){ $('pwUser').value=T.user?T.user.id:''; $('pwMsg').textContent=''; screen('pwchg'); }
+$('pwBtn').onclick=async()=>{
+  const o=$('pwOld').value, n=$('pwNew').value, n2=$('pwNew2').value;
+  const e=!o?'지금 비밀번호를 넣어 주세요.':n.length<8?'새 비밀번호는 8자 이상':(!/[A-Za-z]/.test(n)||!/\d/.test(n))?'영문과 숫자를 섞어 주세요.':n!==n2?'새 비밀번호 두 칸이 다릅니다.':'';
+  if(e){ $('pwMsg').textContent=e; return; }
+  $('pwBtn').disabled=true; $('pwBtn').textContent='바꾸는 중…';
+  try{ const r=await api('staffChangePw',{oldPw:o,newPw:n}); ['pwOld','pwNew','pwNew2'].forEach(i=>$(i).value=''); T.user=r.me?r.me.user:T.user; toast('비밀번호를 바꿨습니다.'); enter(); }
+  catch(err){ $('pwMsg').textContent=err.message; }
+  finally{ $('pwBtn').disabled=false; $('pwBtn').textContent='비밀번호 바꾸기'; }
+};
+
+/* ── 들어가기 ── */
+function enter(){
+  const u=T.user, P=u.perms||{};
+  $('who').textContent=u.disp||u.name+' 님';
+  document.querySelector('[data-t=orders]').classList.toggle('hidden',!(P.pay||P.ship));
+  document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask);
+  $('trackNow').classList.toggle('hidden',!P.ship);
+  screen('app');
+  go((P.pay||P.ship)?'orders':P.ask?'ask':'report');
+  if(!(P.pay||P.ship)&&P.ask) loadBoard(true);
+}
+$('tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b) go(b.dataset.t); });
+function go(t){
+  tab=t; showErr('');
+  document.querySelectorAll('#tabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  ['orders','report','ask'].forEach(x=>$('t-'+x).classList.toggle('hidden',x!==t));
+  if(t==='report') loadReport();
+  if(t==='ask') loadAsks();
+  if(t==='orders') loadBoard();
+}
+function setCnt(id,n){ const c=$(id); c.textContent=n; c.classList.toggle('zero',!n); }
+
+/* ── 주문 현황 ──
+   신규주문(입금 전) → 주문확인(입금 확인·출고 준비) → 출고대기(송장 입력, 집하 전) → 출고완료(한진 집하·전달) · 취소 */
+const ST=[
+  {k:'신규', t:'신규주문', d:'입금을 기다리는 주문'},
+  {k:'확인', t:'주문확인', d:'입금 확인됨 · 송장을 넣거나 전달합니다'},
+  {k:'대기', t:'출고대기', d:'송장 입력됨 · 한진 집하 전 (매일 18시 자동 확인)'},
+  {k:'완료', t:'출고완료', d:'한진 집하·전달 끝 (최근 30일)'},
+  {k:'취소', t:'취소', d:'취소접수(환불 대기)와 취소완료 (최근 30일)'}
+];
+let stage=null, boardBusy=false, O=[];
+async function loadBoard(quiet){
+  if(boardBusy) return; boardBusy=true;
+  if(!quiet&&tab==='orders'&&!O.length) $('oBody').innerHTML='<p class="load">불러오는 중…</p>';
+  try{
+    const r=await api('opsBoard'); T.user=r.user||T.user; O=r.orders||[];
+    setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders();
+  }catch(e){ showErr(e.message); }
+  finally{ boardBusy=false; }
+}
+function destsIn(o,k){ return o.dests.filter(d=>d.stage===k); }
+function inStage(k){ return O.filter(o=>k==='취소'?(o.status==='취소접수'||o.status==='취소'):destsIn(o,k).length); }
+function paintOrders(){
+  const P=T.user.perms||{};
+  const cnt=ST.map(s=>{ const L=inStage(s.k); return {k:s.k, n:L.length, m:s.k==='신규'||s.k==='취소'?0:L.reduce((a,o)=>a+destsIn(o,s.k).length,0), hot:s.k==='취소'?L.filter(o=>o.status==='취소접수').length:0}; });
+  if(!stage){ const f=cnt.find(c=>c.n&&c.k!=='완료'&&c.k!=='취소'); stage=f?f.k:'신규'; }
+  setCnt('cOrd',cnt.filter(c=>c.k==='신규'||c.k==='확인').reduce((a,c)=>a+c.n,0)+cnt.find(c=>c.k==='취소').hot);
+  $('flow').innerHTML=ST.map((s,i)=>{ const c=cnt[i];
+    return (i&&i<4?'<span class="arr">›</span>':i===4?'<span class="gap"></span>':'')+'<button type="button" class="stg'+(stage===s.k?' on':'')+(s.k==='취소'?' cx':'')+'" data-stg="'+s.k+'"><span>'+s.t+'</span><b>'+c.n+'</b>'
+      +(c.m&&c.m!==c.n?'<small>'+c.m+'곳</small>':c.hot?'<small class="hot">환불 '+c.hot+'</small>':'')+'</button>'; }).join('');
+  const S=ST.find(s=>s.k===stage), q=$('oSearch').value.trim();
+  const L=inStage(stage).filter(o=>!q||o.orderNo.indexOf(q.toUpperCase())>=0||(o.payer+o.who).indexOf(q)>=0||String(o.total).indexOf(q.replace(/[,원]/g,''))>=0||o.dests.some(d=>(d.rcv+d.to+d.waybill).indexOf(q)>=0));
+  $('oHint').textContent=S.d;
+  if(!L.length){ $('oBody').innerHTML='<p class="empty">'+(q?'찾는 주문이 없습니다.':S.t+' 단계에 주문이 없습니다.')+'</p>'; return; }
+  if(stage==='신규') $('oBody').innerHTML='<div class="pgrid">'+L.map(o=>newCard(o,P)).join('')+'</div>';
+  else $('oBody').innerHTML=L.map(o=>shipCard(o,P)).join('');
+}
+$('flow').addEventListener('click',e=>{ const b=e.target.closest('[data-stg]'); if(b){ stage=b.dataset.stg; paintOrders(); } });
+$('oSearch').addEventListener('input',()=>paintOrders());
+const daysAgo=d=>Math.floor((Date.now()-new Date(String(d).replace(' ','T')+':00+09:00').getTime())/864e5);
+const chTag=o=>o.free?'<span class="tag m">회사 출고 · '+esc(o.kind)+'</span>':'<span class="tag'+(o.channel==='지인'?' f':'')+'">'+esc(o.channel)+'</span>';
+function newCard(o,P){ const age=daysAgo(o.date);
+  return '<div class="card pcard"><div class="chead"><span class="no">'+esc(o.orderNo)+'</span>'+chTag(o)
+    +(o.bundle?'<span class="meta">함께 주문 '+esc(o.bundle)+'</span>':'')+'<span class="meta">'+esc(o.date)+'</span>'+(age>=3?'<span class="age">'+age+'일째</span>':'')+'</div>'
+    +'<div class="pmain"><span class="pname">'+esc(o.payer)+'</span><span class="pamt">'+won(o.total)+'</span></div>'
+    +'<dl class="pdl"><dt>입금자 연락</dt><dd>'+telA(o.payerTel)+(o.payType?' <span class="meta">('+esc(o.payType)+')</span>':'')+'</dd>'
+    +'<dt>주문하신 분</dt><dd>'+esc(o.who)+(o.dept?' · '+esc(o.dept):'')+' '+telA(o.whoTel)+'</dd>'
+    +'<dt>내용</dt><dd>'+o.qty+'박스 · '+o.dests.length+'곳'+(o.dests.some(d=>d.ship==='방문수령')?' (방문 수령 포함)':'')+'</dd>'
+    +(o.cash?'<dt>현금영수증</dt><dd class="tel">'+esc(o.cash)+'</dd>':'')+'</dl>'
+    +'<div class="cbtn">'+(P.pay?'<button class="btn pri" type="button" data-pay="'+esc(o.orderNo)+'">입금 확인</button>':'')
+    +'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div></div>'; }
+const SHIPL={'택배':'택배','방문수령':'공장 방문 수령','현장전달':'방문객 현장 전달','직접전달':'직접 전달','사내비치':'냉장고 채우기'};
+function shipCard(o,P){
+  const cx=stage==='취소', ds=cx?o.dests:destsIn(o,stage);
+  let head='<div class="card"><div class="chead"><span class="no">'+esc(o.orderNo)+'</span>'+chTag(o)
+    +'<span class="meta">'+esc(o.date)+' · '+(o.free?'요청 ':'주문 ')+esc(o.who)+'</span>'+telA(o.whoTel)
+    +(o.free?'':'<span class="meta">입금 '+esc(o.payer)+' · '+won(o.total)+'</span>')
+    +(o.dests.length>1&&!cx?'<span class="meta">이 단계 '+ds.length+' / '+o.dests.length+'곳</span>':'')+'</div>'
+    +(o.free&&o.purpose?'<p class="purpose">목적: '+esc(o.purpose)+'</p>':'');
+  if(cx){ const c=o.cancel||{}, wait=o.status==='취소접수';
+    return head+'<p class="purpose"><span class="st '+(wait?'wait':'no')+'">'+(wait?'취소접수 · 환불 대기':'취소완료')+'</span> '+esc(c.reason||'')+' <span class="meta">'+esc((c.at||'').slice(5,16))+' '+esc(c.by||'')+'</span></p>'
+      +(wait?'<p class="meta" style="margin:0 0 8px">'+esc(o.payer)+' 님께 <b>'+won(o.total)+'</b> 환불 ('+telA(o.payerTel)+')</p>'+(P.pay?'<button class="btn pri" type="button" data-refund="'+esc(o.orderNo)+'">환불 완료</button>':''):'')+'</div>'; }
+  const rows=ds.map(d=>{ const i=o.dests.indexOf(d), parcel=d.ship==='택배';
+    const who=(o.free&&d.to&&d.to!==d.rcv?esc(d.to)+' · ':'')+'<b>'+esc(d.rcv)+'</b> '+telA(d.tel);
+    const where=parcel?'<div class="addr">'+(d.zip?'('+esc(d.zip)+') ':'')+esc(d.addr)+(d.memo?'<small>요청: '+esc(d.memo)+'</small>':'')+'</div>'+(stage==='확인'?'<button type="button" class="link" data-copy="'+esc(o.orderNo)+'|'+i+'">받는 분·주소 복사</button>':'')
+      :'<div class="addr">'+esc(SHIPL[d.ship]||d.ship)+(d.memo?'<small>'+esc(d.memo)+'</small>':'')+(d.ship==='사내비치'||d.ship==='현장전달'?'<small>'+esc(d.addr)+'</small>':'')+'</div>';
+    let act='';
+    if(stage==='확인'){
+      if(!P.ship) act='<span class="meta">송장 담당이 처리합니다</span>';
+      else if(parcel) act='<div class="wbin"><input inputmode="numeric" placeholder="한진 송장번호" data-wb="'+esc(d.rowId)+'" maxlength="16"><button class="btn pri" type="button" data-save="'+esc(d.rowId)+'">저장</button></div>';
+      else act='<button class="btn gold" type="button" data-hand="'+esc(d.rowId)+'">'+(d.ship==='사내비치'?'채움 완료':'전달 완료')+'</button>';
+    } else if(stage==='대기'){
+      act='<div class="wbdone wait">'+esc(d.waybill)+' <a href="'+HANJIN+encodeURIComponent(d.waybill)+'" target="_blank" rel="noopener">한진 조회</a>'
+        +'<small>'+esc(d.at.slice(5,16))+' '+esc(d.by)+' 입력'+(d.track?' · '+esc(d.track):'')+'</small></div>'
+        +(P.ship?'<button type="button" class="link" data-fix="'+esc(d.rowId)+'">송장 고치기</button> · <button type="button" class="link" data-picked="'+esc(d.rowId)+'">출고 완료 (수동)</button>':'');
+    } else {
+      act='<div class="wbdone">'+(parcel?esc(d.waybill)+' <a href="'+HANJIN+encodeURIComponent(d.waybill)+'" target="_blank" rel="noopener">조회</a>':'전달 완료')
+        +'<small>'+(parcel?'집하 '+esc(d.picked.slice(5,16))+(d.delivered?' · <b style="color:var(--ok)">배송완료 '+esc(d.delivered.slice(5,16))+'</b>':d.track?' · '+esc(d.track):''):esc(d.picked.slice(5,16))+' '+esc(d.by))+'</small></div>';
+    }
+    return '<tr><td><span class="dn">'+(i+1)+'</span></td><td>'+who+'</td><td>'+where+'</td><td class="num">'+d.qty+esc(d.unit)+'</td><td>'+act+'<div class="meta mq">'+d.qty+esc(d.unit)+'</div></td></tr>'; }).join('');
+  const canCancel=(stage==='확인'||stage==='대기')&&!o.dests.some(d=>d.stage==='완료')&&(P.pay||P.ship);
+  return head+'<table class="dtable"><thead><tr><th></th><th>받는 분</th><th>주소·방법</th><th class="num">수량</th><th>처리</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +(canCancel?'<div class="cbtn r"><button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div>':'')+'</div>';
+}
+function findDest(rowId){ for(const o of O){ const d=o.dests.find(x=>x.rowId===rowId); if(d) return {o,d}; } return null; }
+async function saveWb(rowId,fix){
+  const inp=document.querySelector('[data-wb="'+rowId+'"]'), wb=(inp?inp.value:'').replace(/\D/g,'');
+  if(wb.length<10||wb.length>14){ toast('송장번호는 숫자 10~14자리입니다.'); if(inp) inp.focus(); return; }
+  const btn=document.querySelector('[data-save="'+rowId+'"]'); if(btn){ btn.disabled=true; btn.textContent='저장 중…'; }
+  try{ await api('opsShip',{rowId, waybill:wb, carrier:'한진택배', fix:!!fix}); toast(fix?'송장을 고쳤습니다.':'저장했습니다 → 출고대기'); await loadBoard(true); }
+  catch(e){ toast(e.message); if(btn){ btn.disabled=false; btn.textContent='저장'; } }
+}
+$('oBody').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.dataset.wb){ e.preventDefault(); saveWb(e.target.dataset.wb, e.target.dataset.fix==='1'); } });
+$('oBody').addEventListener('click',async e=>{
+  const t=e.target.closest('[data-pay],[data-cancel],[data-refund],[data-save],[data-hand],[data-fix],[data-picked],[data-copy]'); if(!t) return;
+  const D=t.dataset;
+  if(D.pay){ const o=O.find(x=>x.orderNo===D.pay); if(!o) return;
+    return modal('<h3>통장에서 확인하셨나요?</h3><div class="big">'+esc(o.payer)+' <small>님</small></div><div class="big">'+won(o.total)+'</div>'
+      +'<p>주문 '+esc(o.orderNo)+' · '+o.qty+'박스</p><p class="mnote">이름과 금액이 통장과 <b>둘 다</b> 맞을 때만 누르세요. 누르면 «주문확인»으로 넘어갑니다.</p>'
+      +'<input id="mMemo" placeholder="메모 (선택) 예: 9/28 농협 입금">','입금 확인',
+      async()=>{ await api('opsPay',{orderNo:o.orderNo, amount:o.total, memo:$('mMemo').value.trim()}); toast(o.payer+' 님 '+won(o.total)+' 입금 확인 → 주문확인'); await loadBoard(true); }); }
+  if(D.cancel){ const o=O.find(x=>x.orderNo===D.cancel); if(!o) return; const paid=!o.free&&o.status!=='입금대기', wb=o.dests.some(d=>d.waybill);
+    return modal('<h3>주문 취소</h3><p><b>'+esc(o.orderNo)+'</b> · '+(o.free?esc(o.kind):esc(o.payer)+' 님 '+won(o.total))+'</p>'
+      +(paid?'<p class="mnote">입금이 확인된 주문입니다. <b>«취소접수»</b>가 되고, 환불하신 뒤 [환불 완료]를 눌러야 끝납니다.</p>':'<p class="mnote">바로 취소됩니다.</p>')
+      +(wb?'<p class="mnote warn">송장이 들어가 있습니다. <b>한진 예약(송장)을 먼저 취소</b>해 주세요.</p><label class="mchk"><input type="checkbox" id="mWb"> 한진 예약을 취소했습니다</label>':'')
+      +'<input id="mReason" placeholder="취소 사유 (필수) 예: 고객 요청 · 중복 주문">','주문 취소',
+      async()=>{ const reason=$('mReason').value.trim(); if(reason.length<2) throw new Error('취소 사유를 적어 주세요');
+        if(wb&&!$('mWb').checked) throw new Error('한진 예약 취소를 확인해 주세요');
+        const r=await api('opsCancel',{orderNo:o.orderNo, reason, waybillOk:wb}); toast(r.status==='취소접수'?'취소접수 — 환불 후 [환불 완료]를 눌러 주세요':'취소했습니다'); await loadBoard(true); }); }
+  if(D.refund){ const o=O.find(x=>x.orderNo===D.refund); if(!o) return;
+    return modal('<h3>환불하셨나요?</h3><div class="big">'+esc(o.payer)+' <small>님</small></div><div class="big">'+won(o.total)+'</div><p class="mnote">통장에서 실제로 보낸 뒤 누르세요. 누르면 «취소완료»가 됩니다.</p><input id="mMemo" placeholder="메모 (선택) 예: 9/29 농협 이체">','환불 완료',
+      async()=>{ await api('opsRefund',{orderNo:o.orderNo, memo:$('mMemo').value.trim()}); toast('취소완료'); await loadBoard(true); }); }
+  if(D.save){ const inp=document.querySelector('[data-wb="'+D.save+'"]'); return saveWb(D.save, inp&&inp.dataset.fix==='1'); }
+  if(D.hand){ const x=findDest(D.hand); if(!x) return;
+    return modal('<h3>'+(x.d.ship==='사내비치'?'냉장고 채움 완료':'전달 완료')+'</h3><p><b>'+esc(x.d.rcv||x.d.to)+'</b> · '+x.d.qty+esc(x.d.unit)+'</p><p>'+esc(SHIPL[x.d.ship]||x.d.ship)+'</p><p class="mnote">실제로 전해 드린(옮긴) 뒤에 눌러 주세요. «출고완료»로 넘어갑니다.</p>',
+      '완료', async()=>{ await api('opsShip',{rowId:x.d.rowId}); toast('출고완료'); await loadBoard(true); }); }
+  if(D.picked){ const x=findDest(D.picked); if(!x) return;
+    return modal('<h3>출고 완료 (수동)</h3><p>송장 <b>'+esc(x.d.waybill)+'</b> · '+esc(x.d.rcv)+'</p><p class="mnote">보통은 매일 저녁 6시 한진 조회로 자동 처리됩니다. 한진 조회가 안 될 때나 택배 기사가 가져간 것을 확인했을 때만 누르세요.</p>',
+      '출고 완료', async()=>{ await api('opsShip',{rowId:x.d.rowId, picked:true}); toast('출고완료'); await loadBoard(true); }); }
+  if(D.fix){ const x=findDest(D.fix); if(!x) return; const td=t.closest('td');
+    td.innerHTML='<div class="wbin"><input inputmode="numeric" placeholder="바른 송장번호" data-wb="'+esc(x.d.rowId)+'" data-fix="1" maxlength="16" value="'+esc(x.d.waybill)+'"><button class="btn pri" type="button" data-save="'+esc(x.d.rowId)+'">고쳐 저장</button></div>';
+    td.querySelector('input').select(); return; }
+  if(D.copy){ const [no,i]=D.copy.split('|'), o=O.find(x=>x.orderNo===no), d=o&&o.dests[+i]; if(!d) return;
+    const txt=d.rcv+'\t'+fmtTel(d.tel)+'\t'+(d.zip?d.zip+'\t':'')+d.addr+(d.memo?'\t'+d.memo:'');
+    try{ await navigator.clipboard.writeText(txt); toast('복사했습니다 — 한진 프로그램에 붙여 넣으세요.'); }catch(_){ toast(txt); } }
+});
+/* 한진 자동 조회 상태 */
+function paintTrack(t){
+  const el=$('trackBar');
+  if(!t){ el.className='track'; el.innerHTML='한진 자동 조회: 아직 한 번도 돌지 않았습니다 (매일 저녁 6시)'; return; }
+  const old=daysAgo(t.at.slice(0,16))>=2, bad=t.fail>0||old;
+  el.className='track'+(bad?' bad':'');
+  el.innerHTML='한진 자동 조회 '+esc(t.at.slice(5,16))+' ('+esc(t.by)+') · '+t.checked+'건 확인 · 집하 '+t.picked+' · 배송완료 '+t.delivered
+    +(t.fail?' · <b>실패 '+t.fail+'건: '+esc(t.why)+'</b> — 출고대기에서 [출고 완료 (수동)]으로 처리해 주세요':'')+(old?' · <b>이틀 넘게 조회가 없습니다</b>':'');
+}
+$('trackNow').onclick=async()=>{ const b=$('trackNow'); b.disabled=true; b.textContent='조회 중… (1분쯤)';
+  try{ const r=await api('opsTrackNow'); toast(r.checked+'건 확인 · 집하 '+r.picked+' · 배송완료 '+r.delivered); await loadBoard(true); }
+  catch(e){ toast(e.message); } finally{ b.disabled=false; b.textContent='지금 한진 조회'; } };
+
+/* ── 출고 현황 (모두) ── */
+let R=null;
+$('rMonth').onchange=()=>loadReport($('rMonth').value);
+async function loadReport(m){
+  $('rBody').innerHTML='<p class="load">불러오는 중…</p>';
+  try{
+    R=await api('opsReport',{month:m||$('rMonth').value||''});
+    if(!$('rMonth').options.length||!m){ $('rMonth').innerHTML=R.months.map(x=>'<option value="'+x+'"'+(x===R.month?' selected':'')+'>'+x.replace('-','년 ')+'월</option>').join(''); }
+    paintReport();
+  }catch(e){ $('rBody').innerHTML=''; showErr(e.message); }
+}
+function paintReport(){
+  const S=R.sale, bt=R.byType;
+  const tile=(l,v,u,em)=>'<div class="tile"><span>'+l+'</span><b>'+v+'<small>'+u+'</small></b>'+(em?'<em>'+em+'</em>':'')+'</div>';
+  const K=[['샘플','박스'],['선물·방문객','박스'],['냉장고','개']];
+  let h='<div class="h3" style="margin-top:0">판매 ('+R.month.replace('-','년 ')+'월)</div><div class="tiles">'
+    +tile('주문',S.orders,'건',Object.keys(S.byCh).map(k=>k+' '+S.byCh[k].orders+'건').join(' · '))
+    +tile('박스',S.boxes,'박스','')+tile('금액',Number(S.amount).toLocaleString('ko-KR'),'원','택배비 포함')
+    +tile('입금 대기',S.wait,'건','입금 확인 '+S.paid+' · 보냄 '+S.sent)+'</div>';
+  h+='<div class="h3">회사 출고 (무상)</div><div class="tiles">'+K.map(k=>tile(k[0],bt[k[0]+'|'+k[1]]||0,k[1],'')).join('')+'</div>';
+  const W=Object.keys(R.byWho).sort((a,b)=>R.byWho[b].box-R.byWho[a].box);
+  if(W.length) h+='<table class="rtable" style="max-width:420px;margin-bottom:6px"><thead><tr><th>요청한 사람</th><th style="text-align:right">건</th><th style="text-align:right">박스 환산</th></tr></thead><tbody>'
+    +W.map(w=>'<tr><td>'+esc(w)+'</td><td class="n">'+R.byWho[w].n+'</td><td class="n">'+R.byWho[w].box+'</td></tr>').join('')+'</tbody></table><p class="meta" style="margin:0 0 6px">냉장고 낱개는 36개 = 1박스로 환산</p>';
+  const cls=s=>s==='반려'?'no':s==='승인대기'||s==='출고대기'?'wait':'ok';
+  h+='<div class="h3">회사 출고 목록</div>'+(R.free.length?'<table class="rtable wide"><thead><tr><th>날짜</th><th>종류</th><th>받는 곳</th><th>목적</th><th>요청</th><th style="text-align:right">수량</th><th>상태</th></tr></thead><tbody>'
+    +R.free.map(x=>'<tr><td>'+esc(x.date.slice(5))+'<small>'+esc(x.orderNo)+'</small></td><td>'+esc(x.kind)+'</td><td>'+x.dests.map(d=>esc(d.to||d.rcv)+(d.rcv&&d.to&&d.rcv!==d.to?' · '+esc(d.rcv):'')+'<small>'+esc(d.addr)+'</small>').join('')+'</td><td>'+esc(x.purpose)+'</td><td>'+esc(x.who)+'</td><td class="n">'+x.qty+esc(x.unit)+'</td><td><span class="st '+cls(x.status)+'">'+esc(x.status)+'</span></td></tr>').join('')
+    +'</tbody></table>':'<p class="empty">이 달 회사 출고가 없습니다.</p>');
+  $('rBody').innerHTML=h;
+}
+$('rCsv').onclick=()=>{
+  if(!R) return;
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[['요청번호','접수일시','종류','원장 유형','받는 곳','받는 분','수량','단위','박스 환산','목적','요청한 사람','소속','상태']];
+  R.free.forEach(x=>rows.push([x.orderNo,x.date,x.kind,x.type,x.dests.map(d=>d.to).join(' / '),x.dests.map(d=>d.rcv).join(' / '),x.qty,x.unit,x.box,x.purpose,x.who,x.dept,x.status]));
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='회사출고_'+R.month+'.csv'; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+};
+
+/* ── 문의 ── */
+let QA=null;
+async function loadAsks(){
+  $('qBody').innerHTML='<p class="load">불러오는 중…</p>';
+  try{ QA=await api('opsAsks'); setCnt('cAsk',QA.open.length); paintAsks(); }
+  catch(e){ $('qBody').innerHTML=''; showErr(e.message); }
+}
+function askCard(a,open){
+  return '<div class="card" data-ask="'+esc(a.askNo)+'"><div class="chead"><span class="no">'+esc(a.askNo)+'</span><span class="tag">'+esc(a.type)+'</span>'
+    +'<span class="st '+(a.status==='처리중'?'wait':a.status==='완료'||a.status==='답변완료'?'ok':'no')+'">'+esc(a.status)+'</span><span class="meta">'+esc(a.date)+'</span></div>'
+    +'<div><b>'+esc(a.name)+'</b> '+telA(a.tel)+(a.orderNo?' · 주문 <span class="tel">'+esc(a.orderNo)+'</span>':'')+'</div>'
+    +'<div class="qbody">'+esc(a.body)+'</div>'
+    +(a.photos.length?'<div style="margin:-4px 0 10px">'+a.photos.map((p,i)=>'<a href="'+esc(p)+'" target="_blank" rel="noopener">사진 '+(i+1)+'</a>').join(' · ')+' <span class="meta">(드라이브 권한이 있어야 열립니다)</span></div>':'')
+    +(a.answer?'<div class="qans">'+esc(a.answer)+'</div>':'')
+    +(open?'<textarea class="qta" placeholder="무엇을 안내했는지 적어 주세요. 예: 전화로 내일 도착 안내함"></textarea><div class="qbtns"><button class="btn ghost" type="button" data-qs="처리중">처리 중으로 저장</button><button class="btn pri" type="button" data-qs="완료">답변 완료</button></div>':'')
+    +'</div>';
+}
+function paintAsks(){
+  $('qBody').innerHTML=(QA.open.length?QA.open.map(a=>askCard(a,true)).join(''):'<p class="empty">답을 기다리는 문의가 없습니다.</p>')
+    +(QA.done.length?'<details class="more"><summary>끝난 문의 (최근 60일 '+QA.done.length+'건)</summary>'+QA.done.map(a=>askCard(a,false)).join('')+'</details>':'');
+}
+$('qBody').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-qs]'); if(!b) return;
+  const c=b.closest('[data-ask]'), ta=c.querySelector('.qta'), ans=ta.value.trim();
+  if(ans.length<2){ toast('무엇을 안내했는지 적어 주세요.'); ta.focus(); return; }
+  c.querySelectorAll('button').forEach(x=>x.disabled=true);
+  try{ await api('opsAskReply',{askNo:c.dataset.ask, answer:ans, status:b.dataset.qs}); toast('저장했습니다.'); await loadAsks(); }
+  catch(err){ toast(err.message); c.querySelectorAll('button').forEach(x=>x.disabled=false); }
+});
+
+/* ── 확인창 ── */
+function modal(html,yes,fn){
+  $('mbox').innerHTML=html+'<div class="mbtns"><button type="button" class="no">취소</button><button type="button" class="yes">'+esc(yes)+'</button></div>';
+  $('modal').classList.remove('hidden');
+  const y=$('mbox').querySelector('.yes'), n=$('mbox').querySelector('.no'), close=()=>$('modal').classList.add('hidden');
+  n.onclick=close;
+  y.onclick=async()=>{ y.disabled=true; n.disabled=true; y.textContent='처리 중…';
+    try{ await fn(); close(); }catch(e){ toast(e.message); y.disabled=false; n.disabled=false; y.textContent=yes; } };
+}
+
+/* ── 로그아웃 · 자동 로그아웃 ── */
+function logout(why){
+  const t=T.token; T.token=null; T.user=null;
+  if(t){ try{ fetch(API_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'staffLogout',token:t})}); }catch(_){} }
+  location.replace(location.pathname+'?out='+(typeof why==='string'?why:'bye'));
+}
+['click','keydown','touchstart','input'].forEach(ev=>document.addEventListener(ev,()=>{ lastAct=Date.now(); },{passive:true}));
+setInterval(()=>{ if(T.token&&Date.now()-lastAct>IDLE_MS) logout('idle'); },20000);
+/* 할 일 숫자는 5분마다 새로 (화면을 보고 있을 때만) */
+setInterval(()=>{ if(T.token&&!document.hidden&&tab==='orders') loadBoard(true); },5*60*1000);
+let warmed=0; function warm(){ if(Date.now()-warmed<120000) return; warmed=Date.now(); try{ fetch(API_URL,{method:'GET'}).catch(()=>{}); }catch(_){} }
+$('lid').addEventListener('focus',warm);
+window.addEventListener('DOMContentLoaded',()=>{
+  warm();
+  const q=new URLSearchParams(location.search), out=q.get('out');
+  const MSG={bye:'로그아웃되었습니다.', idle:'30분 동안 사용이 없어 로그아웃되었습니다.', expired:'로그인 시간이 지났습니다. 다시 로그인해 주세요.'};
+  if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); }
+});
+</script>
+</body>
+</html>
