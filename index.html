@@ -355,7 +355,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.3.4';
+const VERSION='ops-v0.3.5';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -369,7 +369,10 @@ const T={token:null,user:null};
 const B={pay:[],ship:[],askOpen:0};
 let tab='home', lastAct=Date.now();
 const SK='wvops';                                      // 탭 세션 열쇠 (buy/ 와 같이 씀)
-const ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ v?sessionStorage.setItem(SK,v):sessionStorage.removeItem(SK); }catch(_){} }};
+const ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ if(v) sessionStorage.setItem(SK,v); else ['','_u','_b','_me'].forEach(k=>sessionStorage.removeItem(SK+k)); }catch(_){} }};
+/* v0.3.5 화면 옮길 때 기다리지 않게 — 이 탭에만 잠깐 기억 (탭을 닫거나 로그아웃하면 지움). 서버 확인은 뒤에서 */
+const cget=k=>{ try{ return JSON.parse(sessionStorage.getItem(SK+k)||'null'); }catch(_){ return null; } };
+const cset=(k,v)=>{ try{ sessionStorage.setItem(SK+k,JSON.stringify(v)); }catch(_){} };
 
 async function api(action,payload){
   const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,token:T.token,client:VERSION},payload||{}))});
@@ -394,7 +397,7 @@ $('loginBtn').onclick=async()=>{
   const slow=setTimeout(()=>{ $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='서버 응답을 기다리는 중입니다. 보통 5~15초 걸립니다.'; },3000);
   try{
     const r=await api('staffLogin',{id,pw});
-    T.token=r.token; T.user=r.user; ss.set(r.token); lastAct=Date.now(); $('lpw').value='';
+    T.token=r.token; T.user=r.user; ss.set(r.token); cset('_u',r.user); if(r.me) cset('_me',r.me); lastAct=Date.now(); $('lpw').value='';
     if(r.mustChange){ $('pwOld').value=pw; showPw(); } else afterLogin();
   }catch(e){ $('gateMsg').style.color=''; $('gateMsg').textContent=e.message; $('lpw').value=''; }
   finally{ clearTimeout(slow); $('loginBtn').disabled=false; $('loginBtn').textContent='로그인'; if(T.token) $('gateMsg').textContent=''; }
@@ -479,12 +482,16 @@ const ST=[
   {k:'취소', t:'취소', d:'취소접수(환불 대기)와 취소완료 (최근 30일)'}
 ];
 let stage=null, boardBusy=false, O=[];
+let BC=null;                                             // v0.3.5 탭에 기억해 둔 주문 현황 (처음 한 번만 먼저 그림)
 async function loadBoard(quiet){
   if(boardBusy) return; boardBusy=true;
   if(!quiet&&tab==='orders'&&!O.length) $('oBody').innerHTML='<p class="load">불러오는 중…</p>';
   if(tab==='home'&&!$('hCards').innerHTML) $('hCards').innerHTML='<p class="load">불러오는 중…</p>';
+  if(BC){ const c=BC; BC=null; O=c.orders||[]; setCnt('cAsk',c.askOpen||0); paintTrack(c.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(c.askOpen||0); }   // 기억해 둔 것 먼저 보여 주고
   try{
-    const r=await api('opsBoard',tab==='orders'&&RANGE?RANGE:{}); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
+    const r=await api('opsBoard',tab==='orders'&&RANGE?RANGE:{}); const before=JSON.stringify((T.user||{}).perms); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
+    if(JSON.stringify(T.user.perms)!==before){ const P=T.user.perms||{}; document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P)); document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask); $('trackNow').classList.toggle('hidden',!P.ship); if(!allowed(tab)){ BC=null; boardBusy=false; go('home'); return; } }   // 권한이 바뀌었으면 탭을 다시
+    cset('_u',T.user); if(!RANGE) cset('_b',{orders:O, askOpen:r.askOpen||0, track:r.track||null});
     setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(r.askOpen||0);
   }catch(e){ showErr(e.message); }
   finally{ boardBusy=false; }
@@ -766,8 +773,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); return; }
   if(q.get('next')){ NEXT=q.get('next'); history.replaceState(null,'',location.pathname+location.hash); }
   const tok=ss.get();                                    // 새로 고침·임직원 주문에서 돌아올 때 — 다시 로그인하지 않는다
-  if(tok){ T.token=tok; $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='로그인 확인 중…';
-    api('opsBoard').then(r=>{ T.user=r.user; $('gateMsg').textContent=''; afterLogin(); }).catch(()=>{ T.token=null; ss.set(null); $('gateMsg').textContent=''; }); }
+  if(tok){ T.token=tok; const cu=cget('_u');
+    if(cu&&!/^buy/.test(NEXT)){ T.user=cu; BC=cget('_b'); afterLogin(); return; }   // v0.3.5 기다리지 않고 바로 — 서버 확인은 주문 현황을 불러오며 (만료면 로그인 화면으로)
+    $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='로그인 확인 중…';
+    api('opsBoard').then(r=>{ T.user=r.user; cset('_u',r.user); if(!r.orders||!r.orders.length) BC=null; else BC={orders:r.orders,askOpen:r.askOpen||0,track:r.track||null}; $('gateMsg').textContent=''; afterLogin(); }).catch(()=>{ T.token=null; ss.set(null); $('gateMsg').textContent=''; }); }
 });
 /* 임직원 주문(buy/)에서 로그인하러 왔으면 로그인 뒤 그리로 돌려보낸다 */
 let NEXT='';
