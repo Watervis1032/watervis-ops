@@ -355,7 +355,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.3.3';
+const VERSION='ops-v0.3.4';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -414,14 +414,15 @@ $('pwBtn').onclick=async()=>{
 function enter(){
   const u=T.user, P=u.perms||{};
   $('who').textContent=u.disp||u.name+' 님';
-  document.querySelector('[data-t=orders]').classList.toggle('hidden',!(P.pay||P.ship));
+  document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P));
   document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask);
   $('trackNow').classList.toggle('hidden',!P.ship);
   screen('app');
   const h=(location.hash||'').slice(1).split('/')[0];
   go(['orders','report','ask'].indexOf(h)>=0&&allowed(h)?h:'home',true);
 }
-const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?(P.pay||P.ship):t==='ask'?P.ask:true; };
+const canSee=P=>!!(P.view||P.pay||P.ship);   // v0.3.4 «보기» 권한 = 주문 현황을 보기만
+const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?canSee(P):t==='ask'?P.ask:true; };
 $('tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b) go(b.dataset.t); });
 function go(t,noHash){
   if(!allowed(t)) t='home';
@@ -438,17 +439,17 @@ window.addEventListener('popstate',()=>{ if(T.token) go(((location.hash||'').sli
 
 /* ── 업무포털 첫 화면 ── 권한 있는 카드만. 숫자는 주문 현황과 같은 자료(opsBoard) */
 function paintHome(askOpen){
-  const u=T.user, P=u.perms||{}, ord=P.pay||P.ship;
+  const u=T.user, P=u.perms||{}, ord=canSee(P), act=P.pay||P.ship;
   const n=k=>inStage(k).length, m=k=>inStage(k).reduce((a,o)=>a+destsIn(o,k).length,0);
   const refund=O.filter(o=>o.status==='취소접수').length;
   const todo=[];
-  if(ord&&n('신규')) todo.push(['신규','입금 확인 '+n('신규')+'건']);
-  if(ord&&m('확인')) todo.push(['확인','출고할 주문 '+m('확인')+'곳']);
-  if(ord&&refund) todo.push(['취소','환불 '+refund+'건']);
+  if(act&&n('신규')) todo.push(['신규','입금 확인 '+n('신규')+'건']);
+  if(act&&m('확인')) todo.push(['확인','출고할 주문 '+m('확인')+'곳']);
+  if(act&&refund) todo.push(['취소','환불 '+refund+'건']);
   if(P.ask&&askOpen) todo.push(['ask','문의 답변 '+askOpen+'건']);
-  $('hToday').innerHTML=(ord||P.ask)?'<div class="today"><div class="ticon">📋</div><div class="tbody"><b>오늘 할 일</b><p>'
+  $('hToday').innerHTML=(act||P.ask)?'<div class="today"><div class="ticon">📋</div><div class="tbody"><b>오늘 할 일</b><p>'
     +(todo.length?todo.map(x=>'<button type="button" class="tlink" data-todo="'+x[0]+'">'+esc(x[1])+'</button>').join(' · '):'지금 처리할 일이 없습니다 👍')+'</p></div>'
-    +(ord?'<button type="button" class="btn go1" data-go="orders">열기 →</button>':'')+'</div>':'';
+    +(act?'<button type="button" class="btn go1" data-go="orders">열기 →</button>':'')+'</div>':'';
   const card=(c,icon,title,body,btns)=>'<div class="pcard2 '+c+'"><div class="ph"><span class="pi">'+icon+'</span><h3>'+title+'</h3></div>'+btns+'<p class="pd">'+body+'</p></div>';
   const cards=[];
   if(ord) cards.push(card('c1','📦','주문 현황','신규 <b>'+n('신규')+'</b> › 주문확인 <b>'+n('확인')+'</b> › 출고대기 <b>'+n('대기')+'</b> › 출고완료 <b>'+n('완료')+'</b>'+(refund?' · <b style="color:var(--bad)">환불 '+refund+'</b>':'')+'<br>입금 확인 · 송장 · 전달 완료 · 취소. 출고완료는 매일 저녁 6시 한진 조회로 자동.',
@@ -494,7 +495,7 @@ function paintOrders(){
   const P=T.user.perms||{};
   const cnt=ST.map(s=>{ const L=inStage(s.k); return {k:s.k, n:L.length, m:s.k==='신규'||s.k==='취소'?0:L.reduce((a,o)=>a+destsIn(o,s.k).length,0), hot:s.k==='취소'?L.filter(o=>o.status==='취소접수').length:0}; });
   if(!stage){ const f=cnt.find(c=>c.n&&c.k!=='완료'&&c.k!=='취소'); stage=f?f.k:'신규'; }
-  setCnt('cOrd',cnt.filter(c=>c.k==='신규'||c.k==='확인').reduce((a,c)=>a+c.n,0)+cnt.find(c=>c.k==='취소').hot);
+  setCnt('cOrd',(P.pay||P.ship)?cnt.filter(c=>c.k==='신규'||c.k==='확인').reduce((a,c)=>a+c.n,0)+cnt.find(c=>c.k==='취소').hot:0);   // «보기»만이면 할 일 숫자 없음
   $('flow').innerHTML=ST.map((s,i)=>{ const c=cnt[i];
     return (i&&i<4?'<span class="arr">›</span>':i===4?'<span class="gap"></span>':'')+'<button type="button" class="stg'+(stage===s.k?' on':'')+(s.k==='취소'?' cx':'')+'" data-stg="'+s.k+'"><span>'+s.t+'</span><b>'+c.n+'</b>'
       +(c.m&&c.m!==c.n?'<small>'+c.m+'곳</small>':c.hot?'<small class="hot">환불 '+c.hot+'</small>':'')+'</button>'; }).join('');
@@ -518,7 +519,7 @@ function newCard(o,P){ const age=daysAgo(o.date);
     +'<dt>내용</dt><dd>'+o.qty+'박스 · '+o.dests.length+'곳'+(o.dests.some(d=>d.ship==='방문수령')?' (방문 수령 포함)':'')+'</dd>'
     +(o.cash?'<dt>현금영수증</dt><dd class="tel">'+esc(o.cash)+'</dd>':'')+'</dl>'
     +'<div class="cbtn">'+(P.pay?'<button class="btn pri" type="button" data-pay="'+esc(o.orderNo)+'">입금 확인</button>':'')
-    +'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button></div>'+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
+    +((P.pay||P.ship)?'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button>':'')+'</div>'+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
 const SHIPL={'택배':'택배','방문수령':'공장 방문 수령','현장전달':'방문객 현장 전달','직접전달':'직접 전달','사내비치':'냉장고 채우기'};
 function shipCard(o,P){
   const cx=stage==='취소', ds=cx?o.dests:destsIn(o,stage);
@@ -536,7 +537,7 @@ function shipCard(o,P){
       :'<div class="addr">'+esc(SHIPL[d.ship]||d.ship)+(d.memo?'<small>'+esc(d.memo)+'</small>':'')+(d.ship==='사내비치'||d.ship==='현장전달'?'<small>'+esc(d.addr)+'</small>':'')+'</div>';
     let act='';
     if(stage==='확인'){
-      if(!P.ship) act='<span class="meta">송장 담당이 처리합니다</span>';
+      if(!P.ship) act='<span class="meta">'+(P.pay?'송장 담당이 처리합니다':'출고 준비 중')+'</span>';
       else if(parcel) act='<div class="wbin"><input inputmode="numeric" placeholder="한진 송장번호" data-wb="'+esc(d.rowId)+'" maxlength="16"><button class="btn pri" type="button" data-save="'+esc(d.rowId)+'">저장</button></div>';
       else act='<button class="btn gold" type="button" data-hand="'+esc(d.rowId)+'">'+(d.ship==='사내비치'?'채움 완료':'전달 완료')+'</button>';
     } else if(stage==='대기'){
