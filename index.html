@@ -342,7 +342,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 v0.3.3 · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.3.6</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -355,7 +355,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.3.5';
+const VERSION='ops-v0.3.6';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -767,7 +767,7 @@ setInterval(()=>{ if(T.token&&!document.hidden&&(tab==='orders'||tab==='home')) 
 let warmed=0; function warm(){ if(Date.now()-warmed<120000) return; warmed=Date.now(); try{ fetch(API_URL,{method:'GET'}).catch(()=>{}); }catch(_){} }
 $('lid').addEventListener('focus',warm);
 window.addEventListener('DOMContentLoaded',()=>{
-  warm();
+  warm(); $('ver').textContent=VERSION.replace('ops-','');   // 맨 아래 버전 = 실제 화면 버전
   const q=new URLSearchParams(location.search), out=q.get('out');
   const MSG={bye:'로그아웃되었습니다.', idle:'30분 동안 사용이 없어 로그아웃되었습니다.', expired:'로그인 시간이 지났습니다. 다시 로그인해 주세요.'};
   if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); return; }
