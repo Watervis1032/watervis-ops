@@ -151,6 +151,48 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
 
 
+/* v0.3.1 기간 조회 */
+.period{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 6px}
+.period .inp{padding:7px 9px;font-size:14px;border:1px solid #d6dde6;border-radius:9px;background:#fff}
+.period .qk{display:flex;gap:4px;flex-wrap:wrap}
+.period .chip{padding:5px 11px;font-size:13px}
+.pinfo{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.pinfo b{color:var(--navy)}
+/* v0.3 업무포털 */
+.tabs .tabl{color:#b9c7d8;padding:10px 14px 12px;font-size:15px;font-weight:600;text-decoration:none;white-space:nowrap;margin-left:auto}
+.tabs .tabl:hover{color:#fff}
+.phead{text-align:center;margin:18px 0 26px}
+.phead h1{margin:0;font-size:30px;color:var(--navy);letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:14px}
+.phead .hlogo{height:40px;width:auto}
+.topin .brand{display:flex;align-items:center;gap:8px}
+.topin .blogo{height:20px;width:auto;margin-top:-2px}
+.phead p{margin:6px 0 0;font-size:13px;letter-spacing:.14em;color:var(--muted)}
+.today{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:16px;padding:18px 22px;margin:0 0 26px;box-shadow:0 2px 10px rgba(6,26,51,.04)}
+.today .ticon{width:48px;height:48px;border-radius:12px;background:#fbf8f0;display:grid;place-items:center;font-size:24px;flex:none}
+.today .tbody{flex:1;min-width:0}
+.today .tbody b{font-size:18px;color:var(--navy)}
+.today .tbody p{margin:4px 0 0;color:#4b5868;font-size:14.5px}
+.tlink{background:none;border:0;padding:0;color:var(--navy2);font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:14.5px}
+.go1{background:var(--navy);color:#fff;border:0;flex:none}
+.plabel{font-size:14px;font-weight:700;color:#4b5868;margin:0 0 10px 4px}
+.pgrid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.pcard2{background:#fff;border:1px solid var(--line);border-top:5px solid var(--navy);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(6,26,51,.04)}
+.pcard2.c2{border-top-color:var(--gold)} .pcard2.c3{border-top-color:#1f8a7a} .pcard2.c4{border-top-color:#5b6b8a} .pcard2.c5{border-top-color:#9aa4b1}
+.pcard2 .ph{display:flex;align-items:center;gap:12px}
+.pcard2 .pi{width:40px;height:40px;border-radius:10px;background:#f3f6fa;display:grid;place-items:center;font-size:20px}
+.pcard2 h3{margin:0;font-size:19px;color:var(--navy)}
+.pcard2 .pd{margin:0;font-size:14px;color:var(--muted);line-height:1.7}
+.pcard2 .pd b{color:var(--navy);font-family:var(--mono)}
+.pbtn{display:block;width:100%;text-align:left;border:0;border-radius:10px;padding:13px 16px;font-weight:800;font-size:15px;color:#fff;background:var(--navy);cursor:pointer;text-decoration:none}
+.pcard2.c2 .pbtn{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1d05}
+.pcard2.c3 .pbtn{background:#1f8a7a} .pcard2.c4 .pbtn{background:#5b6b8a}
+.pbtn:disabled{background:#c9d1db;cursor:not-allowed}
+.pbtns{display:grid;gap:8px}
+.pcard2.c2 .pbtn.alt{background:#fff;color:var(--navy);border:1px solid #e6d7b0}
+.pnext{margin-top:22px;border:1px dashed var(--line);border-radius:14px;padding:14px 20px;color:var(--muted);font-size:13.5px;background:#fff}
+.pnext b{color:#4b5868}
+.pnext ul{margin:6px 0 0;padding-left:18px;columns:2}
+@media (max-width:720px){ .phead h1{font-size:24px;gap:10px} .phead .hlogo{height:30px} .today{flex-wrap:wrap;padding:14px 16px} .go1{width:100%} .pnext ul{columns:1} .tabs .tabl{margin-left:0} }
 /* v0.2.3 처리 기록 */
 .hist{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
 .hlist{list-style:none;margin:6px 0 0;padding:0;font-size:13px}
@@ -207,7 +249,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 <section id="gate">
   <div style="width:100%">
     <img class="glogo" src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="WATERVIS" onerror="this.remove()">
-    <div class="gtitle">직원 업무</div>
+    <div class="gtitle">업무포털</div>
     <p class="gsub">임직원 주문과 같은 휴대폰 번호·비밀번호로 로그인합니다.</p>
     <form class="lbox" id="loginForm" onsubmit="return false">
       <input id="lid" type="tel" inputmode="numeric" autocomplete="username" placeholder="휴대폰 번호" maxlength="13">
@@ -240,24 +282,43 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 <div id="app" class="hidden">
   <header class="top">
     <div class="topin">
-      <img src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="" onerror="this.remove()">
-      <span class="brand">직원 업무<small>ops.watervis.co.kr</small></span>
+      <span class="brand" onclick="go('home')" style="cursor:pointer"><img class="blogo" src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="WATERVIS" onerror="this.outerHTML='워터비스 '">업무포털<small>WATERVIS OPERATIONS PORTAL</small></span>
       <span class="sp"></span>
       <span class="who" id="who"></span>
       <button class="out" type="button" onclick="logout()">로그아웃</button>
     </div>
     <nav class="tabs" id="tabs">
+      <button type="button" data-t="home">업무포털</button>
       <button type="button" data-t="orders" class="hidden">주문 현황<span class="cnt zero" id="cOrd">0</span></button>
       <button type="button" data-t="report">출고 현황 (월별)</button>
       <button type="button" data-t="ask" class="hidden">문의<span class="cnt zero" id="cAsk">0</span></button>
+      <a class="tabl" href="buy/">임직원 주문 ↗</a>
     </nav>
   </header>
 
   <main>
     <p class="err hidden" id="err"></p>
 
+    <!-- 업무포털 (첫 화면) -->
+    <section id="t-home" class="hidden">
+      <div class="phead"><h1><img class="hlogo" src="https://watervis.co.kr/order/img/logo-watervis.png" alt="WATERVIS" onerror="this.outerHTML='워터비스 '"><span>업무포털</span></h1><p>WATERVIS OPERATIONS PORTAL</p></div>
+      <div id="hToday"></div>
+      <p class="plabel">주문 · 출고 · 고객 — 업무 현황 한눈에 보기</p>
+      <div class="pgrid3" id="hCards"></div>
+      <div class="pnext"><b>향후 추가 예정</b><ul><li>통장 입금 자동 확인</li><li>반품·교환</li><li>한진 송장 엑셀 올리기</li><li>재고 관리 · 생산 일지</li><li>아마란스10 연동</li><li>신규 직원 교육자료</li></ul></div>
+    </section>
+
     <!-- 주문 현황 -->
     <section id="t-orders" class="hidden">
+      <div class="period">
+        <select class="inp" id="pBasis" title="기간 기준"><option value="paid">입금 확인일</option><option value="order">주문일</option></select>
+        <input class="inp" type="date" id="pFrom"><span>~</span><input class="inp" type="date" id="pTo">
+        <button type="button" class="btn pri sm" id="pGo">조회</button>
+        <span class="qk"><button type="button" class="chip" data-pq="today">오늘</button><button type="button" class="chip" data-pq="yday">어제</button><button type="button" class="chip" data-pq="week">이번 주</button><button type="button" class="chip" data-pq="month">이번 달</button><button type="button" class="chip on" data-pq="">진행 중 전체</button></span>
+        <span class="sp"></span>
+        <button type="button" class="btn gold sm" id="xlsBtn">엑셀 내려받기</button>
+      </div>
+      <p class="pinfo" id="pInfo"></p>
       <div class="flow" id="flow"></div>
       <div class="bar"><span class="hint" id="oHint"></span><span class="sp"></span><input class="search" id="oSearch" placeholder="이름·주문번호·금액·송장으로 찾기">
         <button class="btn ghost" type="button" onclick="loadBoard()">새로 고침</button></div>
@@ -281,7 +342,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스 직원 업무 v0.2.3 · 문의 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 v0.3.2 · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -291,9 +352,10 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 /* 워터비스 직원 업무(OPS) v0.2 — 2026-09-27 · 주문 현황(신규주문→주문확인→출고대기→출고완료·취소), 한진 자동 조회 표시
    v0.1 — 2026-09-27
    · 서버: 주문원장 Apps Script (v0.6.0 부터 ops… 요청)
-   · 로그인 토큰은 이 탭의 메모리에만 둔다. 30분 동안 조작이 없으면 스스로 로그아웃
+   · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
+   · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.2.3';
+const VERSION='ops-v0.3.2';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -305,7 +367,9 @@ const fmtTel=v=>{v=String(v||'').replace(/\D/g,'').slice(0,11);return v.length<4
 const telA=t=>t?'<a class="tel" href="tel:'+esc(String(t).replace(/\D/g,''))+'">'+esc(fmtTel(t))+'</a>':'';
 const T={token:null,user:null};
 const B={pay:[],ship:[],askOpen:0};
-let tab='report', lastAct=Date.now();
+let tab='home', lastAct=Date.now();
+const SK='wvops';                                      // 탭 세션 열쇠 (buy/ 와 같이 씀)
+const ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ v?sessionStorage.setItem(SK,v):sessionStorage.removeItem(SK); }catch(_){} }};
 
 async function api(action,payload){
   const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,token:T.token,client:VERSION},payload||{}))});
@@ -330,8 +394,8 @@ $('loginBtn').onclick=async()=>{
   const slow=setTimeout(()=>{ $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='서버 응답을 기다리는 중입니다. 보통 5~15초 걸립니다.'; },3000);
   try{
     const r=await api('staffLogin',{id,pw});
-    T.token=r.token; T.user=r.user; lastAct=Date.now(); $('lpw').value='';
-    if(r.mustChange){ $('pwOld').value=pw; showPw(); } else enter();
+    T.token=r.token; T.user=r.user; ss.set(r.token); lastAct=Date.now(); $('lpw').value='';
+    if(r.mustChange){ $('pwOld').value=pw; showPw(); } else afterLogin();
   }catch(e){ $('gateMsg').style.color=''; $('gateMsg').textContent=e.message; $('lpw').value=''; }
   finally{ clearTimeout(slow); $('loginBtn').disabled=false; $('loginBtn').textContent='로그인'; if(T.token) $('gateMsg').textContent=''; }
 };
@@ -341,7 +405,7 @@ $('pwBtn').onclick=async()=>{
   const e=!o?'지금 비밀번호를 넣어 주세요.':n.length<8?'새 비밀번호는 8자 이상':(!/[A-Za-z]/.test(n)||!/\d/.test(n))?'영문과 숫자를 섞어 주세요.':n!==n2?'새 비밀번호 두 칸이 다릅니다.':'';
   if(e){ $('pwMsg').textContent=e; return; }
   $('pwBtn').disabled=true; $('pwBtn').textContent='바꾸는 중…';
-  try{ const r=await api('staffChangePw',{oldPw:o,newPw:n}); ['pwOld','pwNew','pwNew2'].forEach(i=>$(i).value=''); T.user=r.me?r.me.user:T.user; toast('비밀번호를 바꿨습니다.'); enter(); }
+  try{ const r=await api('staffChangePw',{oldPw:o,newPw:n}); ['pwOld','pwNew','pwNew2'].forEach(i=>$(i).value=''); T.user=r.me?r.me.user:T.user; toast('비밀번호를 바꿨습니다.'); afterLogin(); }
   catch(err){ $('pwMsg').textContent=err.message; }
   finally{ $('pwBtn').disabled=false; $('pwBtn').textContent='비밀번호 바꾸기'; }
 };
@@ -354,18 +418,54 @@ function enter(){
   document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask);
   $('trackNow').classList.toggle('hidden',!P.ship);
   screen('app');
-  go((P.pay||P.ship)?'orders':P.ask?'ask':'report');
-  if(!(P.pay||P.ship)&&P.ask) loadBoard(true);
+  const h=(location.hash||'').slice(1).split('/')[0];
+  go(['orders','report','ask'].indexOf(h)>=0&&allowed(h)?h:'home',true);
 }
+const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?(P.pay||P.ship):t==='ask'?P.ask:true; };
 $('tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b) go(b.dataset.t); });
-function go(t){
+function go(t,noHash){
+  if(!allowed(t)) t='home';
   tab=t; showErr('');
   document.querySelectorAll('#tabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
-  ['orders','report','ask'].forEach(x=>$('t-'+x).classList.toggle('hidden',x!==t));
+  ['home','orders','report','ask'].forEach(x=>$('t-'+x).classList.toggle('hidden',x!==t));
+  if(!noHash){ const want=t==='home'?'':'#'+t; if(location.hash!==want) history.pushState(null,'',location.pathname+want); }
+  window.scrollTo(0,0);
+  if(t==='home'||t==='orders') loadBoard(t==='home');
   if(t==='report') loadReport();
   if(t==='ask') loadAsks();
-  if(t==='orders') loadBoard();
 }
+window.addEventListener('popstate',()=>{ if(T.token) go(((location.hash||'').slice(1).split('/')[0])||'home',true); });
+
+/* ── 업무포털 첫 화면 ── 권한 있는 카드만. 숫자는 주문 현황과 같은 자료(opsBoard) */
+function paintHome(askOpen){
+  const u=T.user, P=u.perms||{}, ord=P.pay||P.ship;
+  const n=k=>inStage(k).length, m=k=>inStage(k).reduce((a,o)=>a+destsIn(o,k).length,0);
+  const refund=O.filter(o=>o.status==='취소접수').length;
+  const todo=[];
+  if(ord&&n('신규')) todo.push(['신규','입금 확인 '+n('신규')+'건']);
+  if(ord&&m('확인')) todo.push(['확인','송장·전달 '+m('확인')+'곳']);
+  if(ord&&refund) todo.push(['취소','환불 '+refund+'건']);
+  if(P.ask&&askOpen) todo.push(['ask','문의 답변 '+askOpen+'건']);
+  $('hToday').innerHTML=(ord||P.ask)?'<div class="today"><div class="ticon">📋</div><div class="tbody"><b>오늘 할 일</b><p>'
+    +(todo.length?todo.map(x=>'<button type="button" class="tlink" data-todo="'+x[0]+'">'+esc(x[1])+'</button>').join(' · '):'지금 처리할 일이 없습니다 👍')+'</p></div>'
+    +(ord?'<button type="button" class="btn go1" data-go="orders">열기 →</button>':'')+'</div>':'';
+  const card=(c,icon,title,body,btns)=>'<div class="pcard2 '+c+'"><div class="ph"><span class="pi">'+icon+'</span><h3>'+title+'</h3></div>'+btns+'<p class="pd">'+body+'</p></div>';
+  const cards=[];
+  if(ord) cards.push(card('c1','📦','주문 현황','신규 <b>'+n('신규')+'</b> › 주문확인 <b>'+n('확인')+'</b> › 출고대기 <b>'+n('대기')+'</b> › 출고완료 <b>'+n('완료')+'</b>'+(refund?' · <b style="color:var(--bad)">환불 '+refund+'</b>':'')+'<br>입금 확인 · 송장 · 전달 완료 · 취소. 출고완료는 매일 저녁 6시 한진 조회로 자동.',
+    '<button type="button" class="pbtn" data-go="orders">주문 현황 열기 →</button>'));
+  cards.push(card('c2','🛒','임직원 주문',(u.canBuy?'가족·지인에게 임직원가로 보내기, ':'')+'회사 출고(샘플·선물·방문객·냉장고) 기록, 내 주문·배송 확인.',
+    '<div class="pbtns">'+(u.canBuy?'<a class="pbtn" href="buy/">주문하기 →</a>':'')+'<a class="pbtn alt" href="buy/#free">회사 출고 →</a><a class="pbtn alt" href="buy/#mine">내 주문 →</a></div>'));
+  if(P.ask) cards.push(card('c3','💬','문의',askOpen?'답변을 기다리는 문의 <b>'+askOpen+'</b>건.':'답변을 기다리는 문의가 없습니다.'+'<br>적은 답변은 고객이 주문 조회에서 문의번호로 봅니다.',
+    '<button type="button" class="pbtn" data-go="ask">문의 열기 →</button>'));
+  cards.push(card('c4','📊','출고 현황 (월별)','달마다 판매 요약과 회사 출고(샘플·선물·방문객·냉장고)를 종류별·사람별로. 세무사용 엑셀 내려받기.',
+    '<button type="button" class="pbtn" data-go="report">출고 현황 열기 →</button>'));
+  if(P.bank) cards.push(card('c5','🏦','입금 자동 확인','통장 거래내역 엑셀을 올리면 주문과 자동으로 짝을 맞춥니다.','<button type="button" class="pbtn" disabled>준비 중 (다음 판)</button>'));
+  $('hCards').innerHTML=cards.join('');
+}
+$('t-home').addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
+  const t=e.target.closest('[data-todo]'); if(t){ if(t.dataset.todo==='ask') go('ask'); else { stage=t.dataset.todo; go('orders'); } }
+});
 function setCnt(id,n){ const c=$(id); c.textContent=n; c.classList.toggle('zero',!n); }
 
 /* ── 주문 현황 ──
@@ -381,9 +481,10 @@ let stage=null, boardBusy=false, O=[];
 async function loadBoard(quiet){
   if(boardBusy) return; boardBusy=true;
   if(!quiet&&tab==='orders'&&!O.length) $('oBody').innerHTML='<p class="load">불러오는 중…</p>';
+  if(tab==='home'&&!$('hCards').innerHTML) $('hCards').innerHTML='<p class="load">불러오는 중…</p>';
   try{
-    const r=await api('opsBoard'); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
-    setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders();
+    const r=await api('opsBoard',tab==='orders'&&RANGE?RANGE:{}); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
+    setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(r.askOpen||0);
   }catch(e){ showErr(e.message); }
   finally{ boardBusy=false; }
 }
@@ -404,8 +505,8 @@ function paintOrders(){
   if(stage==='신규') $('oBody').innerHTML='<div class="pgrid">'+L.map(o=>newCard(o,P)).join('')+'</div>';
   else $('oBody').innerHTML=L.map(o=>shipCard(o,P)).join('');
 }
-$('flow').addEventListener('click',e=>{ const b=e.target.closest('[data-stg]'); if(b){ stage=b.dataset.stg; paintOrders(); } });
-$('oSearch').addEventListener('input',()=>paintOrders());
+$('flow').addEventListener('click',e=>{ const b=e.target.closest('[data-stg]'); if(b){ stage=b.dataset.stg; paintOrders(); paintPInfo(); } });
+$('oSearch').addEventListener('input',()=>{ paintOrders(); paintPInfo(); });
 const daysAgo=d=>Math.floor((Date.now()-new Date(String(d).replace(' ','T')+':00+09:00').getTime())/864e5);
 const chTag=o=>o.free?'<span class="tag m">회사 출고 · '+esc(o.kind)+'</span>':'<span class="tag'+(o.channel==='지인'?' f':'')+'">'+esc(o.channel)+'</span>';
 function newCard(o,P){ const age=daysAgo(o.date);
@@ -494,6 +595,51 @@ $('oBody').addEventListener('click',async e=>{
     const txt=d.rcv+'\t'+fmtTel(d.tel)+'\t'+(d.zip?d.zip+'\t':'')+d.addr+(d.memo?'\t'+d.memo:'');
     try{ await navigator.clipboard.writeText(txt); toast('복사했습니다 — 한진 프로그램에 붙여 넣으세요.'); }catch(_){ toast(txt); } }
 });
+/* ── 기간 조회 · 엑셀 (v0.3.1) ── 기본은 «진행 중 전체». 기간을 고르면 그 기간 주문을 단계와 상관없이 */
+let RANGE=null;
+const ymd=d=>{ const k=new Date(d.getTime()+9*3600e3); return k.toISOString().slice(0,10); };
+function quick(q){ const t=ymd(new Date()), U=x=>new Date(x+'T00:00:00Z'), f=d=>d.toISOString().slice(0,10);
+  if(q==='today') return [t,t];
+  if(q==='yday'){ const y=f(new Date(U(t).getTime()-864e5)); return [y,y]; }
+  if(q==='week'){ const wd=(U(t).getUTCDay()+6)%7; return [f(new Date(U(t).getTime()-wd*864e5)),t]; }   // 월요일부터
+  if(q==='month') return [t.slice(0,8)+'01',t];
+  return null; }
+function setRange(r,q){ RANGE=r; document.querySelectorAll('[data-pq]').forEach(b=>b.classList.toggle('on',b.dataset.pq===(q==null?'x':q)));
+  if(r){ $('pFrom').value=r.from; $('pTo').value=r.to; } else { $('pFrom').value=''; $('pTo').value=''; }
+  stage=null; loadBoard(); }
+document.querySelectorAll('[data-pq]').forEach(b=>b.onclick=()=>{ const q=b.dataset.pq, r=quick(q); setRange(r?{from:r[0],to:r[1],basis:$('pBasis').value}:null,q); });
+$('pGo').onclick=()=>{ const f=$('pFrom').value, t=$('pTo').value; if(!f||!t){ toast('시작일과 끝일을 넣어 주세요.'); return; } if(f>t){ toast('시작일이 끝일보다 늦습니다.'); return; }
+  setRange({from:f,to:t,basis:$('pBasis').value},'x'); };
+$('pBasis').onchange=()=>{ if(RANGE) setRange(Object.assign({},RANGE,{basis:$('pBasis').value}),[...document.querySelectorAll('[data-pq].on')].map(b=>b.dataset.pq)[0]||'x'); };
+function paintPInfo(){ const n=O.length;
+  $('pInfo').innerHTML=RANGE?'<b>'+esc(RANGE.from.slice(5))+(RANGE.to!==RANGE.from?' ~ '+esc(RANGE.to.slice(5)):'')+'</b> '+(RANGE.basis==='order'?'주문일':'입금 확인일')+' 기준 · 주문 '+n+'건 (회사 출고는 요청일)':'진행 중인 주문 전체 + 최근 30일 안에 끝난 주문';
+  const S=ST.find(x=>x.k===stage), cnt=stage?(stage==='취소'?inStage('취소').reduce((a,o)=>a+o.dests.length,0):inStage(stage).reduce((a,o)=>a+destsIn(o,stage).length,0)):0;
+  $('xlsBtn').textContent='엑셀 내려받기'+(S?' ('+S.t+' '+cnt+'곳)':''); }
+let XLSX_P=null;
+function loadXlsx(){ if(window.XLSX) return Promise.resolve(); if(XLSX_P) return XLSX_P;
+  XLSX_P=new Promise((ok,bad)=>{ const sc=document.createElement('script'); sc.src=XLSX_SRC; sc.onload=ok; sc.onerror=()=>{ XLSX_P=null; bad(new Error('엑셀 도구를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.')); }; document.head.appendChild(sc); });
+  return XLSX_P; }
+const XLSX_SRC='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const STN={'신규':'신규주문','확인':'주문확인','대기':'출고대기','완료':'출고완료','취소':'취소'};
+$('xlsBtn').onclick=async()=>{
+  const q=$('oSearch').value.trim();
+  const L=inStage(stage).filter(o=>!q||o.orderNo.indexOf(q.toUpperCase())>=0||(o.payer+o.who).indexOf(q)>=0||String(o.total).indexOf(q.replace(/[,원]/g,''))>=0||o.dests.some(d=>(d.rcv+d.to+d.waybill).indexOf(q)>=0));
+  const head=['주문번호','받는곳번호(주문행ID)','구분','단계','받는 분','받는 분 연락처','우편번호','주소','배송 요청사항','품목','수량','단위','받는 방법','주문하신 분','주문자 연락처','입금자','입금 확인일','주문일','택배사','송장번호','집하일','배송완료일'];
+  const rows=[];
+  L.forEach(o=>(stage==='취소'?o.dests:destsIn(o,stage)).forEach(d=>rows.push([o.orderNo,d.rowId,o.free?'회사출고·'+o.kind:o.channel,STN[d.stage]||d.stage,
+    (o.free&&d.to&&d.to!==d.rcv?d.to+' · ':'')+d.rcv,fmtTel(d.tel),d.zip,d.addr,d.memo,o.item||'',d.qty,d.unit,d.ship,o.who,fmtTel(o.whoTel),o.payer,o.free?'':o.paidAt,o.date.slice(0,10),d.carrier,d.waybill,d.picked.slice(0,10),d.delivered.slice(0,10)])));
+  if(!rows.length){ toast('내려받을 줄이 없습니다.'); return; }
+  const b=$('xlsBtn'); b.disabled=true; b.textContent='만드는 중…';
+  try{ await loadXlsx();
+    const ws=XLSX.utils.aoa_to_sheet([head].concat(rows));
+    ws['!cols']=[14,20,12,9,14,15,9,42,22,18,6,6,10,12,15,12,12,12,9,15,12,12].map(w=>({wch:w}));
+    ws['!autofilter']={ref:'A1:'+XLSX.utils.encode_col(head.length-1)+'1'};
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,STN[stage]||'주문');
+    const tag=RANGE?(RANGE.from===RANGE.to?RANGE.from:RANGE.from+'~'+RANGE.to):ymd(new Date());
+    XLSX.writeFile(wb,'워터비스_'+(STN[stage]||'주문')+'_'+tag+'.xlsx');
+    toast(rows.length+'곳을 엑셀로 내려받았습니다.'); }
+  catch(e){ toast(e.message); } finally{ b.disabled=false; paintPInfo(); }
+};
 /* 처리 기록 — 누를 때만 서버에서 그 주문 하나를 찾는다 (평소엔 접혀 있음) */
 const HIST={};
 async function toggleHist(btn,no){
@@ -602,22 +748,29 @@ function modal(html,yes,fn){
 
 /* ── 로그아웃 · 자동 로그아웃 ── */
 function logout(why){
-  const t=T.token; T.token=null; T.user=null;
+  const t=T.token; T.token=null; T.user=null; ss.set(null);
   if(t){ try{ fetch(API_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'staffLogout',token:t})}); }catch(_){} }
   location.replace(location.pathname+'?out='+(typeof why==='string'?why:'bye'));
 }
 ['click','keydown','touchstart','input'].forEach(ev=>document.addEventListener(ev,()=>{ lastAct=Date.now(); },{passive:true}));
 setInterval(()=>{ if(T.token&&Date.now()-lastAct>IDLE_MS) logout('idle'); },20000);
 /* 할 일 숫자는 5분마다 새로 (화면을 보고 있을 때만) */
-setInterval(()=>{ if(T.token&&!document.hidden&&tab==='orders') loadBoard(true); },5*60*1000);
+setInterval(()=>{ if(T.token&&!document.hidden&&(tab==='orders'||tab==='home')) loadBoard(true); },5*60*1000);
 let warmed=0; function warm(){ if(Date.now()-warmed<120000) return; warmed=Date.now(); try{ fetch(API_URL,{method:'GET'}).catch(()=>{}); }catch(_){} }
 $('lid').addEventListener('focus',warm);
 window.addEventListener('DOMContentLoaded',()=>{
   warm();
   const q=new URLSearchParams(location.search), out=q.get('out');
   const MSG={bye:'로그아웃되었습니다.', idle:'30분 동안 사용이 없어 로그아웃되었습니다.', expired:'로그인 시간이 지났습니다. 다시 로그인해 주세요.'};
-  if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); }
+  if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); return; }
+  if(q.get('next')){ NEXT=q.get('next'); history.replaceState(null,'',location.pathname+location.hash); }
+  const tok=ss.get();                                    // 새로 고침·임직원 주문에서 돌아올 때 — 다시 로그인하지 않는다
+  if(tok){ T.token=tok; $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='로그인 확인 중…';
+    api('opsBoard').then(r=>{ T.user=r.user; $('gateMsg').textContent=''; afterLogin(); }).catch(()=>{ T.token=null; ss.set(null); $('gateMsg').textContent=''; }); }
 });
+/* 임직원 주문(buy/)에서 로그인하러 왔으면 로그인 뒤 그리로 돌려보낸다 */
+let NEXT='';
+function afterLogin(){ if(/^buy(#(free|mine))?$/.test(NEXT)){ location.href=NEXT.replace(/^buy/,'buy/'); return; } enter(); }
 </script>
 </body>
 </html>
