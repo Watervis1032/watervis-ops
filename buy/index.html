@@ -310,6 +310,15 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
 .me .who{font-size:13.5px;color:var(--navy);background:rgba(255,255,255,.75);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px)}
 .me .who b{font-weight:700}
 .me .acts{display:flex;gap:6px}
+.me .acts>*{white-space:nowrap}
+.me .who{white-space:nowrap}
+@media (max-width:480px){
+  .me{padding:10px 8px;gap:4px}
+  .me .who{font-size:12.5px;padding:6px 9px} .me .who #meDept{display:none}
+  .me .acts{gap:4px}
+  .me .tbtn,.me .out{padding:7px 9px;font-size:12.5px}
+  .me .tbtn svg{display:none}
+}
 .me .tbtn{position:static}
 .me .out{background:rgba(255,255,255,.8);border:1px solid var(--line);color:var(--navy);border-radius:99px;padding:9px 13px;font-size:13.5px;cursor:pointer;font-weight:600}
 .buyerbox{border:1px solid var(--line);background:#f7f9fb;border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14.5px}
@@ -424,7 +433,8 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
       <span class="who"><b id="meName"></b> <span id="meDept"></span></span>
       <span class="acts">
         <button type="button" class="tbtn" onclick="openMine()"><svg viewBox="0 0 24 24"><path d="M3 7h13v10H3zM16 10h3l2 3v4h-5"/><circle cx="7" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>내 주문</button>
-        <a class="out" href="../" style="text-decoration:none">‹ 업무포털</a>
+        <a class="out" href="../" style="text-decoration:none">‹ 포털</a>
+        <button type="button" class="out" onclick="logout()">로그아웃</button>
       </span>
     </div>
     <div class="wrap">
@@ -755,7 +765,7 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
    · v0.3.6: 입금하실 분을 받는 곳마다 «임직원(주문자)·받는 분·기타»로 고름. 여러 명 붙여넣기 뺌
    · v0.3.5: 받는 곳마다 입금자(다르면 입금자별로 주문이 나뉨)
    · v0.3.4: 받는 분 입력이 기본(«내 정보로 채우기» 버튼), 받는 곳 여러 개, 여러 명 붙여넣기, 주문 확인창 */
-const VERSION='buy-v0.5.0';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
+const VERSION='buy-v0.5.1';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
 const SK='wvops', ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ v?sessionStorage.setItem(SK,v):sessionStorage.removeItem(SK); }catch(_){} }};
 const toPortal=q=>location.replace('../'+(q||''));
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
