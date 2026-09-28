@@ -748,7 +748,7 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
   강원특별자치도 양양군 현남면 원포1길 53, 환경동 1층<br>
   Tel 033-672-1032 · admin@watervis.co.kr<br>
   <button type="button" class="flink" onclick="openAsk()">문의하기</button> · <button type="button" class="flink auth" onclick="openMine()">내 주문</button> · <button type="button" class="flink auth" onclick="logout()">로그아웃</button><br>
-  <span style="opacity:.7">© 2026 WATERVIS CO., LTD. · 임직원 화면 v0.4.2</span>
+  <span style="opacity:.7">© 2026 WATERVIS CO., LTD. · 임직원 화면 <span id="ver">v0.5.3</span></span>
 </footer>
 
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
@@ -765,7 +765,7 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
    · v0.3.6: 입금하실 분을 받는 곳마다 «임직원(주문자)·받는 분·기타»로 고름. 여러 명 붙여넣기 뺌
    · v0.3.5: 받는 곳마다 입금자(다르면 입금자별로 주문이 나뉨)
    · v0.3.4: 받는 분 입력이 기본(«내 정보로 채우기» 버튼), 받는 곳 여러 개, 여러 명 붙여넣기, 주문 확인창 */
-const VERSION='buy-v0.5.2';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
+const VERSION='buy-v0.5.3';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
 const SK='wvops';
 const ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ if(v) sessionStorage.setItem(SK,v); else ['','_u','_b','_me'].forEach(k=>sessionStorage.removeItem(SK+k)); }catch(_){} }};
 /* v0.3.5 화면 옮길 때 기다리지 않게 — 이 탭에만 잠깐 기억 (탭을 닫거나 로그아웃하면 지움). 서버 확인은 뒤에서 */
@@ -1454,7 +1454,7 @@ document.addEventListener('visibilitychange',()=>{ if(!document.hidden) idleChec
 let warmed=0; function warm(){ if(Date.now()-warmed<120000||!API_URL) return; warmed=Date.now(); try{ fetch(API_URL,{method:'GET'}).catch(()=>{}); }catch(_){} }
 $('lid').addEventListener('focus',warm);
 window.addEventListener('DOMContentLoaded',()=>{
-  warm();
+  warm(); $('ver').textContent=VERSION.replace('buy-','');   // 맨 아래 버전 = 실제 화면 버전
   const q=new URLSearchParams(location.search), out=q.get('out');
   const MSG={bye:'로그아웃되었습니다.', idle:'30분 동안 사용이 없어 로그아웃되었습니다.', expired:'로그인 시간이 지났습니다. 다시 로그인해 주세요.'};
   if(out){ $('gateMsg').textContent=MSG[out]||MSG.bye; $('gateMsg').style.color='#cfe0f2'; history.replaceState(null,'',location.pathname); }
