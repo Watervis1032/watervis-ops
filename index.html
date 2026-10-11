@@ -207,6 +207,22 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 .bhint{margin:0 0 10px;font-size:13.5px;background:var(--okbg);color:#14583d;border-radius:9px;padding:7px 10px}
 .bhint.far{background:#f3f5f8;color:#4b5868}
 .rtable small{display:block}
+/* v0.4.1 통장 입금 내역 */
+.bbox{max-height:340px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;-webkit-overflow-scrolling:touch}
+.btbl{width:100%;border-collapse:collapse;font-size:14px}
+.btbl th{position:sticky;top:0;z-index:1;background:#f7f9fb;text-align:left;color:#4b5868;font-weight:600;font-size:12.5px;padding:8px 10px;white-space:nowrap;border-bottom:1px solid var(--line)}
+.btbl td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.btbl tr:first-child td{border-top:0}
+.btbl .n{text-align:right;font-family:var(--mono);white-space:nowrap}
+.btbl small{display:block;color:var(--muted);font-size:12px}
+.btbl .st{white-space:nowrap}
+.btbl .link{white-space:nowrap}
+.btbl tr.k-todo td,.btbl tr.k-plan td{background:#fffaf0;cursor:pointer}
+.btbl tr.k-off td{color:#9aa4b1}
+.bcard.flash{box-shadow:0 0 0 3px var(--gold)}
+.bproof{margin:0 0 8px;font-size:13.5px;background:var(--okbg);color:#14583d;border-radius:9px;padding:6px 10px}
+.bproof.none{background:#f3f5f8;color:#4b5868}
+@media (max-width:720px){ .bbox{max-height:300px} .btbl{font-size:13px} .btbl th:nth-child(4),.btbl td:nth-child(4){display:none} .btbl td,.btbl th{padding:7px 6px} .btbl{min-width:470px} }
 /* v0.2.3 처리 기록 */
 .hist{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
 .hlist{list-style:none;margin:6px 0 0;padding:0;font-size:13px}
@@ -348,7 +364,15 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
         <button class="btn ghost" type="button" onclick="loadBank()">새로 고침</button></div>
       <p class="note">매일 <b>12:40</b> 농협 3405 통장 입금을 자동으로 가져옵니다. 금액·이름이 딱 맞고 다른 후보가 없으면 <b>자동으로 입금 확인</b>되어 «주문확인»으로 넘어갑니다.<br>
         여기에는 <b>사람이 봐야 할 입금</b>만 나옵니다. 12:40 뒤에 들어온 입금은 지금처럼 주문 현황에서 [입금 확인]을 눌러 주세요 (다음 날 자동으로 짝만 지어집니다).</p>
-      <div id="bBody"><p class="load">불러오는 중…</p></div>
+      <div class="h3" style="margin-top:4px">통장 입금 내역 <span class="meta" id="bkSub">농협 3405 · 주문 입금으로 보이는 것만</span></div>
+      <div class="period">
+        <input class="inp" type="date" id="bkFrom"><span>~</span><input class="inp" type="date" id="bkTo">
+        <button type="button" class="btn pri sm" id="bkGo">조회</button>
+        <span class="qk"><button type="button" class="chip" data-bq="today">오늘</button><button type="button" class="chip" data-bq="yday">어제</button><button type="button" class="chip on" data-bq="7">최근 7일</button><button type="button" class="chip" data-bq="month">이번 달</button></span>
+      </div>
+      <div class="bbox" id="bkBox"><p class="load">불러오는 중…</p></div>
+      <p class="pinfo" id="bkSum"></p>
+      <div id="bBody"></div>
       <div class="trackrow"><p class="track" id="bankBar"></p></div>
     </section>
 
@@ -368,7 +392,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.0</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.1</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -381,7 +405,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.0';
+const VERSION='ops-v0.4.1';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -568,7 +592,9 @@ function shipCard(o,P){
     +'<span class="meta">'+esc(o.date)+' · '+(o.free?'요청 ':'주문 ')+esc(o.who)+'</span>'+telA(o.whoTel)
     +(o.free?'':'<span class="meta">입금 '+esc(o.payer)+' · '+won(o.total)+'</span>')
     +(o.dests.length>1&&!cx?'<span class="meta">이 단계 '+ds.length+' / '+o.dests.length+'곳</span>':'')+'</div>'
-    +(o.free&&o.purpose?'<p class="purpose">목적: '+esc(o.purpose)+'</p>':'');
+    +(o.free&&o.purpose?'<p class="purpose">목적: '+esc(o.purpose)+'</p>':'')
+    +(!o.free&&o.status!=='입금대기'&&o.paidAt?(o.payProof?'<p class="bproof">🏦 입금 근거: 통장 '+esc(o.payProof.day)+' '+esc(o.payProof.time)+' <b>'+esc(o.payProof.name)+'</b> '+won(o.payProof.amount)+' · '+esc(o.payProof.how)+'</p>'
+      :'<p class="bproof none">입금 확인 '+esc(o.paidAt.slice(5))+' (수기) · 통장 줄은 다음 12:40 가져오기 때 연결됩니다</p>'):'');
   if(cx){ const c=o.cancel||{}, wait=o.status==='취소접수';
     return head+'<p class="purpose"><span class="st '+(wait?'wait':'no')+'">'+(wait?'취소접수 · 환불 대기':'취소완료')+'</span> '+esc(c.reason||'')+' <span class="meta">'+esc((c.at||'').slice(5,16))+' '+esc(c.by||'')+'</span></p>'
       +(wait?'<p class="meta" style="margin:0 0 8px">'+esc(o.payer)+' 님께 <b>'+won(o.total)+'</b> 환불 ('+telA(o.payerTel)+')</p>'+(P.pay?'<button class="btn pri" type="button" data-refund="'+esc(o.orderNo)+'">환불 완료</button>':''):'')+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
@@ -782,14 +808,14 @@ $('qBody').addEventListener('click',async e=>{
    공유 PC 가 12:40 에 통장 입금을 드라이브에 두면 서버가 12:30~13:30 5분마다 가져와 짝을 맞춘다.
    확실한 것(금액·이름 같음, 양쪽 하나뿐)은 자동 입금 확인. 여기에는 사람이 볼 것만 나온다.
    직원(입금): 짝 후보가 있는 입금만 / 대표(통장): 짝 없는 입금·[제외]·[되돌리기]까지 */
-let BK=null, bankBusy=false;
+let BK=null, bankBusy=false, BKR=null;
 const LV={2:['이름 같음','ok'],1:['이름 비슷함','wait'],0:['이름 다름','no']};
 const BST={'자동확인':['자동 확인','ok'],'직원확인':['사람 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
 const dt=d=>esc(d.day.slice(5))+' '+esc(d.time);
 async function loadBank(){
   if(bankBusy) return; bankBusy=true;
   if(!BK) $('bBody').innerHTML='<p class="load">불러오는 중…</p>';
-  try{ BK=await api('opsBank'); BANKN=BK.todo.length; setCnt('cBank',BANKN); paintBank(); }
+  try{ BK=await api('opsBank',BKR||{}); BANKN=BK.todo.length; setCnt('cBank',BANKN); if(BK.range){ $('bkFrom').value=BK.range.from; $('bkTo').value=BK.range.to; } paintBankList(); paintBank(); }
   catch(e){ $('bBody').innerHTML=''; showErr(e.message); }
   finally{ bankBusy=false; }
 }
@@ -805,7 +831,7 @@ function paintBank(){
   const P=BK, out=[];
   if(!P.autoOn) out.push('<div class="note warn2"><b>시험 중</b> — 자동 입금 확인을 아직 하지 않습니다. «자동 확인 예정» 표시가 붙은 입금이 정말 그 주문이 맞는지 봐 주세요. 맞으면 지금처럼 [이 주문으로 입금 확인]을 누르시면 됩니다.</div>');
   if(P.boss&&P.noSlip) out.push('<p class="note">아마란스 «수금등록» 안 된 입금(주문과 짝 끝난 것) <b>'+P.noSlip+'건</b> — 아마란스 수금등록 화면에서 처리해 주세요.</p>');
-  out.push('<div class="h3" style="margin-top:4px">확인할 입금 <span class="meta">'+P.todo.length+'건</span></div>');
+  out.push('<div class="h3">확인할 입금 <span class="meta">'+P.todo.length+'건 · 위 내역의 «확인 필요» 줄과 같은 입금입니다</span></div>');
   out.push(P.todo.length?P.todo.map(bankCard).join(''):'<p class="empty">사람이 확인할 입금이 없습니다 👍</p>');
   if(P.boss){
     out.push('<div class="h3">짝이 없는 입금 <span class="meta">'+(P.none||[]).length+'건 · 대표님만 보입니다</span></div>');
@@ -821,6 +847,29 @@ function paintBank(){
       +'</tbody></table>':'<p class="empty">없습니다.</p>')+'</details>');
   $('bBody').innerHTML=out.join('');
 }
+const bkSrc=d=>(d.memo?' · '+esc(d.memo):'')+(d.seq?' · 순번 '+esc(d.seq):'')+(d.slip?' · 아마란스 '+esc(d.slip):'')+(d.got?' · '+esc(d.got.slice(5))+' 가져옴':'');
+const BKK={done:null, plan:['자동 확인 예정','auto'], todo:['확인 필요','wait'], none:['짝 없음','no'], off:null};
+/* 통장 입금 내역 (v0.4.1) — 날짜로 조회, 상자 안에서 스크롤. 서버가 주문 입금으로 보이는 줄만 보낸다 */
+function paintBankList(){
+  const L=BK.list||[];
+  if(!L.length){ $('bkBox').innerHTML='<p class="empty" style="margin:0;border:0">이 기간에 주문 입금이 없습니다.</p>'; $('bkSum').textContent=''; return; }
+  $('bkBox').innerHTML='<table class="btbl"><thead><tr><th>입금 일시</th><th>입금자</th><th class="n">금액</th><th>방법</th><th>결과</th><th>주문</th></tr></thead><tbody>'
+    +L.map(d=>{ const k=BKK[d.kind], s=k||BST[d.status]||[d.status,'wait'];
+      const res='<span class="st '+s[1]+'">'+esc(s[0])+'</span>'+(d.kind==='done'&&d.by?'<small>'+esc(d.by)+'</small>':'');
+      const ord=d.orderNo?'<span class="tel">'+esc(d.orderNo)+'</span>'+(d.oPayer?'<small>'+esc(d.oPayer)+(d.oWho&&d.oWho!==d.oPayer?' · 주문 '+esc(d.oWho):'')+'</small>':''):(d.kind==='todo'||d.kind==='plan'?'<button type="button" class="link" data-jump="'+esc(d.key)+'">확인하러 가기 ↓</button>':'');
+      return '<tr class="k-'+d.kind+'"'+(d.kind==='todo'||d.kind==='plan'?' data-jump="'+esc(d.key)+'"':'')+'><td class="tel">'+esc(d.day.slice(5))+' '+esc(d.time)+'</td><td><b>'+esc(d.name)+'</b></td><td class="n">'+won(d.amount)+'</td><td>'+esc(d.memo)+'</td><td>'+res+'</td><td>'+ord+'</td></tr>'; }).join('')
+    +'</tbody></table>';
+  const sum=L.filter(d=>d.kind!=='off'&&d.kind!=='none').reduce((a,d)=>a+d.amount,0), n=k=>L.filter(d=>d.kind===k).length;
+  $('bkSum').innerHTML=esc(BK.range.from.slice(5))+' ~ '+esc(BK.range.to.slice(5))+' · <b>'+L.length+'건</b> · 주문 입금 합계 <b>'+won(sum)+'</b> · 짝 끝남 '+n('done')+' · 확인 필요 '+(n('todo')+n('plan'))+(BK.boss?' · <span class="meta">대표님 화면에는 짝 없는 입금·제외한 돈도 보입니다 (직원 화면에는 안 보임)</span>':'');
+}
+$('bkBox').addEventListener('click',e=>{ const t=e.target.closest('[data-jump]'); if(!t) return; const c=document.getElementById('bk-'+t.dataset.jump);
+  if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),1600); } });
+const bkQuick=q=>{ const t=ymd(new Date()), back=n=>ymd(new Date(Date.now()-n*864e5));
+  return q==='today'?[t,t]:q==='yday'?[back(1),back(1)]:q==='month'?[t.slice(0,8)+'01',t]:[back(6),t]; };
+document.querySelectorAll('[data-bq]').forEach(b=>b.onclick=()=>{ const r=bkQuick(b.dataset.bq); BKR={from:r[0],to:r[1]};
+  document.querySelectorAll('[data-bq]').forEach(x=>x.classList.toggle('on',x===b)); loadBank(); });
+$('bkGo').onclick=()=>{ const f=$('bkFrom').value, t=$('bkTo').value; if(!f||!t){ toast('시작일과 끝일을 넣어 주세요.'); return; }
+  BKR={from:f,to:t}; document.querySelectorAll('[data-bq]').forEach(x=>x.classList.remove('on')); loadBank(); };
 function bankCard(d){
   const named=d.cands.filter(c=>c.lv>=1), other=d.cands.filter(c=>c.lv<1);
   const row=c=>{ const L=LV[c.lv]||LV[0];
@@ -828,7 +877,7 @@ function bankCard(d){
       +'<b>'+esc(c.payer)+'</b> <span class="meta">주문 '+esc(c.at.slice(5))+' · '+esc(c.who)+' · '+c.qty+'박스</span> <span class="st '+L[1]+'">'+L[0]+'</span>'
       +(d.auto===c.orderNo?' <span class="st auto">자동 확인 예정</span>':'')+'</div>'
       +(BK.pay?'<button type="button" class="btn '+(c.lv>=1?'pri':'ghost')+' sm" data-pick="'+esc(d.key)+'|'+esc(c.orderNo)+'">이 주문으로 입금 확인</button>':'')+'</div>'; };
-  return '<div class="card bcard"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · 농협 3405</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
+  return '<div class="card bcard" id="bk-'+esc(d.key)+'"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · 농협 3405'+bkSrc(d)+'</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
     +(d.why?'<p class="bwhy">자동으로 하지 않은 이유: '+esc(d.why)+'</p>':'')
     +named.map(row).join('')
     +(other.length?(named.length?'<details class="bmore"><summary>금액만 같은 다른 주문 '+other.length+'건 (이름 다름)</summary>'+other.map(row).join('')+'</details>'
