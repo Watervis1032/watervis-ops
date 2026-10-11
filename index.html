@@ -347,6 +347,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
         <button type="button" class="btn pri sm" id="pGo">조회</button>
         <span class="qk"><button type="button" class="chip" data-pq="today">오늘</button><button type="button" class="chip" data-pq="yday">어제</button><button type="button" class="chip" data-pq="week">이번 주</button><button type="button" class="chip" data-pq="month">이번 달</button><button type="button" class="chip on" data-pq="">진행 중 전체</button></span>
         <span class="sp"></span>
+        <button type="button" class="btn pri sm hidden" id="hjBtn" title="주문확인 단계의 택배만, 한진 송장 프로그램에 올리는 양식">한진 업로드 엑셀</button>
         <button type="button" class="btn gold sm" id="xlsBtn">엑셀 내려받기</button>
       </div>
       <p class="pinfo" id="pInfo"></p>
@@ -392,7 +393,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.1</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.2</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -405,7 +406,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.1';
+const VERSION='ops-v0.4.2';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -682,7 +683,31 @@ $('pBasis').onchange=()=>{ if(RANGE) setRange(Object.assign({},RANGE,{basis:$('p
 function paintPInfo(){ const n=O.length;
   $('pInfo').innerHTML=RANGE?'<b>'+esc(RANGE.from.slice(5))+(RANGE.to!==RANGE.from?' ~ '+esc(RANGE.to.slice(5)):'')+'</b> '+(RANGE.basis==='order'?'주문일':'입금 확인일')+' 기준 · 주문 '+n+'건 (회사 출고는 요청일)':'진행 중인 주문 전체 + 최근 30일 안에 끝난 주문';
   const S=ST.find(x=>x.k===stage), cnt=stage?(stage==='취소'?inStage('취소').reduce((a,o)=>a+o.dests.length,0):inStage(stage).reduce((a,o)=>a+destsIn(o,stage).length,0)):0;
-  $('xlsBtn').textContent='엑셀 내려받기'+(S?' ('+S.t+' '+cnt+'곳)':''); }
+  $('xlsBtn').textContent='엑셀 내려받기'+(S?' ('+S.t+' '+cnt+'곳)':'');
+  const hj=hjRows().length, P=(T.user&&T.user.perms)||{};
+  $('hjBtn').classList.toggle('hidden',!(stage==='확인'&&P.ship&&!RANGE)); $('hjBtn').textContent='한진 업로드 엑셀 ('+hj+'곳)'; }
+/* ── 한진 업로드 엑셀 (v0.4.2) — 대표님이 받으신 «한진택배 송장» 양식 그대로 (18칸, 빈칸 C·D·E·I·J·K·Q, 빈 Sheet1)
+   주문확인 단계(송장 아직 없음)의 택배 받는 곳만. 특기사항 = 받는곳번호(주문행ID) + 배송 요청사항
+   보내는 분·전화·주소·품목·타입·지불조건은 아래 값. 바뀌면 박재용씨가 엑셀에서 고쳐 올려도 된다 */
+const HJ={sender:'(주)워터비스코퍼레이션', tel:'033-672-1032', from:'강원특별자치도 양양군 현남면 원포1길 53', item:'해양심층수 워터비스', type:'c', pay:'신용'};
+const HJ_HEAD=['보내시는분','전화번호','','','','보낸분주소','받는분','받는분 전화','','','','주소','수량','품목','타입','지불조건','','특기사항'];
+function hjRows(){ const out=[];
+  O.forEach(o=>destsIn(o,'확인').forEach(d=>{ if(d.ship!=='택배'||d.waybill) return;
+    out.push([HJ.sender,HJ.tel,'','','',HJ.from,d.rcv,fmtTel(d.tel),'','','',d.addr,d.qty,HJ.item,HJ.type,HJ.pay,'',(d.rowId+(d.memo?' / '+d.memo:'')).slice(0,100)]); }));
+  return out; }
+$('hjBtn').onclick=async()=>{
+  const rows=hjRows(); if(!rows.length){ toast('주문확인 단계에 송장을 낼 택배가 없습니다.'); return; }
+  const b=$('hjBtn'); b.disabled=true; b.textContent='만드는 중…';
+  try{ await loadXlsx();
+    const ws=XLSX.utils.aoa_to_sheet([HJ_HEAD].concat(rows));
+    rows.forEach((r,i)=>[1,7].forEach(c=>{ const a=XLSX.utils.encode_cell({r:i+1,c}); if(ws[a]){ ws[a].t='s'; ws[a].z='@'; } }));   // 전화번호는 글자로 (앞 0 보존)
+    ws['!cols']=[16,14,4,4,4,36,12,15,4,4,4,48,6,18,6,8,4,30].map(w=>({wch:w}));
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'한진택배 송장'); XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([[]]),'Sheet1');
+    const now=new Date(Date.now()+9*3600e3).toISOString();
+    XLSX.writeFile(wb,'한진업로드_'+now.slice(0,10)+'_'+now.slice(11,16).replace(':','')+'.xlsx');
+    toast(rows.length+'곳 — 한진 프로그램에 올린 뒤, 나온 송장번호를 받는 곳마다 넣어 주세요.'); }
+  catch(e){ toast(e.message); } finally{ b.disabled=false; paintPInfo(); }
+};
 let XLSX_P=null;
 function loadXlsx(){ if(window.XLSX) return Promise.resolve(); if(XLSX_P) return XLSX_P;
   XLSX_P=new Promise((ok,bad)=>{ const sc=document.createElement('script'); sc.src=XLSX_SRC; sc.onload=ok; sc.onerror=()=>{ XLSX_P=null; bad(new Error('엑셀 도구를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.')); }; document.head.appendChild(sc); });
