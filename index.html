@@ -193,6 +193,20 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 .pnext b{color:#4b5868}
 .pnext ul{margin:6px 0 0;padding-left:18px;columns:2}
 @media (max-width:720px){ .phead h1{font-size:24px;gap:10px} .phead .hlogo{height:30px} .today{flex-wrap:wrap;padding:14px 16px} .go1{width:100%} .pnext ul{columns:1} .tabs .tabl{margin-left:0} }
+/* v0.4.0 통장 입금 */
+.note.warn2{background:var(--warnbg);border-color:#f0dcb0;color:#5c3d00}
+.bcard{padding:14px 16px}
+.bhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:8px}
+.bwhy{font-size:13px;color:var(--muted);margin:0 0 8px}
+.bwhy.warn{color:var(--bad)}
+.bcand{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding:9px 0;flex-wrap:wrap}
+.bcand.far{opacity:.85}
+.bci{flex:1;min-width:240px;font-size:14px}
+.st.auto{background:#e6eefc;color:#1d4fa8}
+.bmore summary{cursor:pointer;font-size:13px;color:var(--navy2);padding:6px 0}
+.bhint{margin:0 0 10px;font-size:13.5px;background:var(--okbg);color:#14583d;border-radius:9px;padding:7px 10px}
+.bhint.far{background:#f3f5f8;color:#4b5868}
+.rtable small{display:block}
 /* v0.2.3 처리 기록 */
 .hist{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
 .hlist{list-style:none;margin:6px 0 0;padding:0;font-size:13px}
@@ -290,6 +304,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
     <nav class="tabs" id="tabs">
       <button type="button" data-t="home">업무포털</button>
       <button type="button" data-t="orders" class="hidden">주문 현황<span class="cnt zero" id="cOrd">0</span></button>
+      <button type="button" data-t="bank" class="hidden">통장 입금<span class="cnt zero" id="cBank">0</span></button>
       <button type="button" data-t="report">출고 현황 (월별)</button>
       <button type="button" data-t="ask" class="hidden">문의<span class="cnt zero" id="cAsk">0</span></button>
       <a class="tabl" href="buy/">임직원 주문 ↗</a>
@@ -305,7 +320,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="hToday"></div>
       <p class="plabel">주문 · 출고 · 고객 — 업무 현황 한눈에 보기</p>
       <div class="pgrid3" id="hCards"></div>
-      <div class="pnext"><b>향후 추가 예정</b><ul><li>통장 입금 자동 확인</li><li>반품·교환</li><li>한진 송장 엑셀 올리기</li><li>재고 관리 · 생산 일지</li><li>아마란스10 연동</li><li>신규 직원 교육자료</li></ul></div>
+      <div class="pnext"><b>향후 추가 예정</b><ul><li>반품·교환</li><li>한진 송장 엑셀 올리기</li><li>재고 관리 · 생산 일지</li><li>아마란스10 연동</li><li>신규 직원 교육자료</li></ul></div>
     </section>
 
     <!-- 주문 현황 -->
@@ -326,6 +341,17 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div class="trackrow"><p class="track" id="trackBar"></p><button class="btn ghost sm hidden" type="button" id="trackNow">지금 한진 조회</button></div>
     </section>
 
+    <!-- 통장 입금 (v0.4.0) -->
+    <section id="t-bank" class="hidden">
+      <div class="bar"><h2>통장 입금</h2><span class="sp"></span>
+        <button class="btn ghost" type="button" id="bankNow">지금 가져오기</button>
+        <button class="btn ghost" type="button" onclick="loadBank()">새로 고침</button></div>
+      <p class="note">매일 <b>12:40</b> 농협 3405 통장 입금을 자동으로 가져옵니다. 금액·이름이 딱 맞고 다른 후보가 없으면 <b>자동으로 입금 확인</b>되어 «주문확인»으로 넘어갑니다.<br>
+        여기에는 <b>사람이 봐야 할 입금</b>만 나옵니다. 12:40 뒤에 들어온 입금은 지금처럼 주문 현황에서 [입금 확인]을 눌러 주세요 (다음 날 자동으로 짝만 지어집니다).</p>
+      <div id="bBody"><p class="load">불러오는 중…</p></div>
+      <div class="trackrow"><p class="track" id="bankBar"></p></div>
+    </section>
+
     <!-- 출고 현황 (모두) -->
     <section id="t-report" class="hidden">
       <div class="bar"><h2>출고 현황</h2><select class="inp" id="rMonth"></select><span class="sp"></span>
@@ -342,7 +368,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.3.6</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.0</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -355,7 +381,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.3.6';
+const VERSION='ops-v0.4.0';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -419,24 +445,27 @@ function enter(){
   $('who').textContent=u.disp||u.name+' 님';
   document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P));
   document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask);
+  document.querySelector('[data-t=bank]').classList.toggle('hidden',!canBank(P));
   $('trackNow').classList.toggle('hidden',!P.ship);
   screen('app');
   const h=(location.hash||'').slice(1).split('/')[0];
-  go(['orders','report','ask'].indexOf(h)>=0&&allowed(h)?h:'home',true);
+  go(['orders','bank','report','ask'].indexOf(h)>=0&&allowed(h)?h:'home',true);
 }
 const canSee=P=>!!(P.view||P.pay||P.ship);   // v0.3.4 «보기» 권한 = 주문 현황을 보기만
-const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?canSee(P):t==='ask'?P.ask:true; };
+const canBank=P=>!!(P.pay||P.bank);           // v0.4.0 통장 입금 = 입금(직원) 또는 통장(대표)
+const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?canSee(P):t==='bank'?canBank(P):t==='ask'?P.ask:true; };
 $('tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b) go(b.dataset.t); });
 function go(t,noHash){
   if(!allowed(t)) t='home';
   tab=t; showErr('');
   document.querySelectorAll('#tabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
-  ['home','orders','report','ask'].forEach(x=>$('t-'+x).classList.toggle('hidden',x!==t));
+  ['home','orders','bank','report','ask'].forEach(x=>$('t-'+x).classList.toggle('hidden',x!==t));
   if(!noHash){ const want=t==='home'?'':'#'+t; if(location.hash!==want) history.pushState(null,'',location.pathname+want); }
   window.scrollTo(0,0);
   if(t==='home'||t==='orders') loadBoard(t==='home');
   if(t==='report') loadReport();
   if(t==='ask') loadAsks();
+  if(t==='bank') loadBank();
 }
 window.addEventListener('popstate',()=>{ if(T.token) go(((location.hash||'').slice(1).split('/')[0])||'home',true); });
 
@@ -449,6 +478,7 @@ function paintHome(askOpen){
   if(act&&n('신규')) todo.push(['신규','입금 확인 '+n('신규')+'건']);
   if(act&&m('확인')) todo.push(['확인','출고할 주문 '+m('확인')+'곳']);
   if(act&&refund) todo.push(['취소','환불 '+refund+'건']);
+  if(canBank(P)&&BANKN) todo.push(['bank','통장 입금 확인 '+BANKN+'건']);
   if(P.ask&&askOpen) todo.push(['ask','문의 답변 '+askOpen+'건']);
   $('hToday').innerHTML=(act||P.ask)?'<div class="today"><div class="ticon">📋</div><div class="tbody"><b>오늘 할 일</b><p>'
     +(todo.length?todo.map(x=>'<button type="button" class="tlink" data-todo="'+x[0]+'">'+esc(x[1])+'</button>').join(' · '):'지금 처리할 일이 없습니다 👍')+'</p></div>'
@@ -463,12 +493,13 @@ function paintHome(askOpen){
     '<button type="button" class="pbtn" data-go="ask">문의 열기 →</button>'));
   cards.push(card('c4','📊','출고 현황 (월별)','달마다 판매 요약과 회사 출고(샘플·선물·방문객·냉장고)를 종류별·사람별로. 세무사용 엑셀 내려받기.',
     '<button type="button" class="pbtn" data-go="report">출고 현황 열기 →</button>'));
-  if(P.bank) cards.push(card('c5','🏦','입금 자동 확인','통장 거래내역 엑셀을 올리면 주문과 자동으로 짝을 맞춥니다.','<button type="button" class="pbtn" disabled>준비 중 (다음 판)</button>'));
+  if(canBank(P)) cards.push(card('c5','🏦','통장 입금',(BANKN?'사람이 확인할 입금 <b>'+BANKN+'</b>건.':'확인할 입금이 없습니다.')+'<br>매일 12:40 농협 3405 입금을 가져와 확실한 것은 자동으로 입금 확인'+(BANKAUTO?'':' <b>(지금은 시험 중 — 자동 예정만 표시)</b>')+'.',
+    '<button type="button" class="pbtn" data-go="bank">통장 입금 열기 →</button>'));
   $('hCards').innerHTML=cards.join('');
 }
 $('t-home').addEventListener('click',e=>{
   const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go); return; }
-  const t=e.target.closest('[data-todo]'); if(t){ if(t.dataset.todo==='ask') go('ask'); else { stage=t.dataset.todo; go('orders'); } }
+  const t=e.target.closest('[data-todo]'); if(t){ if(t.dataset.todo==='ask'||t.dataset.todo==='bank') go(t.dataset.todo); else { stage=t.dataset.todo; go('orders'); } }
 });
 function setCnt(id,n){ const c=$(id); c.textContent=n; c.classList.toggle('zero',!n); }
 
@@ -481,18 +512,18 @@ const ST=[
   {k:'완료', t:'출고완료', d:'한진 집하·전달 끝 (최근 30일)'},
   {k:'취소', t:'취소', d:'취소접수(환불 대기)와 취소완료 (최근 30일)'}
 ];
-let stage=null, boardBusy=false, O=[];
+let stage=null, boardBusy=false, O=[], BANKN=0, BANKAUTO=false;
 let BC=null;                                             // v0.3.5 탭에 기억해 둔 주문 현황 (처음 한 번만 먼저 그림)
 async function loadBoard(quiet){
   if(boardBusy) return; boardBusy=true;
   if(!quiet&&tab==='orders'&&!O.length) $('oBody').innerHTML='<p class="load">불러오는 중…</p>';
   if(tab==='home'&&!$('hCards').innerHTML) $('hCards').innerHTML='<p class="load">불러오는 중…</p>';
-  if(BC){ const c=BC; BC=null; O=c.orders||[]; setCnt('cAsk',c.askOpen||0); paintTrack(c.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(c.askOpen||0); }   // 기억해 둔 것 먼저 보여 주고
+  if(BC){ const c=BC; BC=null; O=c.orders||[]; setCnt('cAsk',c.askOpen||0); BANKN=c.bankTodo||0; BANKAUTO=!!c.bankAuto; setCnt('cBank',BANKN); paintTrack(c.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(c.askOpen||0); }   // 기억해 둔 것 먼저 보여 주고
   try{
     const r=await api('opsBoard',tab==='orders'&&RANGE?RANGE:{}); const before=JSON.stringify((T.user||{}).perms); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
-    if(JSON.stringify(T.user.perms)!==before){ const P=T.user.perms||{}; document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P)); document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask); $('trackNow').classList.toggle('hidden',!P.ship); if(!allowed(tab)){ BC=null; boardBusy=false; go('home'); return; } }   // 권한이 바뀌었으면 탭을 다시
-    cset('_u',T.user); if(!RANGE) cset('_b',{orders:O, askOpen:r.askOpen||0, track:r.track||null});
-    setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(r.askOpen||0);
+    if(JSON.stringify(T.user.perms)!==before){ const P=T.user.perms||{}; document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P)); document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask); document.querySelector('[data-t=bank]').classList.toggle('hidden',!canBank(P)); $('trackNow').classList.toggle('hidden',!P.ship); if(!allowed(tab)){ BC=null; boardBusy=false; go('home'); return; } }   // 권한이 바뀌었으면 탭을 다시
+    cset('_u',T.user); if(!RANGE) cset('_b',{orders:O, askOpen:r.askOpen||0, track:r.track||null, bankTodo:r.bankTodo||0, bankAuto:!!r.bankAuto});
+    BANKN=r.bankTodo||0; BANKAUTO=!!r.bankAuto; setCnt('cBank',BANKN); setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(r.askOpen||0);
   }catch(e){ showErr(e.message); }
   finally{ boardBusy=false; }
 }
@@ -513,6 +544,7 @@ function paintOrders(){
   if(stage==='신규') $('oBody').innerHTML='<div class="pgrid">'+L.map(o=>newCard(o,P)).join('')+'</div>';
   else $('oBody').innerHTML=L.map(o=>shipCard(o,P)).join('');
 }
+$('oBody').addEventListener('click',e=>{ if(e.target.closest('[data-go2]')) go('bank'); });
 $('flow').addEventListener('click',e=>{ const b=e.target.closest('[data-stg]'); if(b){ stage=b.dataset.stg; paintOrders(); paintPInfo(); } });
 $('oSearch').addEventListener('input',()=>{ paintOrders(); paintPInfo(); });
 const daysAgo=d=>Math.floor((Date.now()-new Date(String(d).replace(' ','T')+':00+09:00').getTime())/864e5);
@@ -525,6 +557,8 @@ function newCard(o,P){ const age=daysAgo(o.date);
     +'<dt>주문하신 분</dt><dd>'+esc(o.who)+(o.dept?' · '+esc(o.dept):'')+' '+telA(o.whoTel)+'</dd>'
     +'<dt>내용</dt><dd>'+o.qty+'박스 · '+o.dests.length+'곳'+(o.dests.some(d=>d.ship==='방문수령')?' (방문 수령 포함)':'')+'</dd>'
     +(o.cash?'<dt>현금영수증</dt><dd class="tel">'+esc(o.cash)+'</dd>':'')+'</dl>'
+    +(o.bank?'<p class="bhint'+(o.bank.lv>=1?'':' far')+'">🏦 통장 입금 '+esc(o.bank.day)+' '+esc(o.bank.time)+' <b>'+esc(o.bank.name)+'</b> '+won(o.bank.amount)
+      +(o.bank.auto?' · <b>자동 확인 '+(BANKAUTO?'대상':'예정(시험)')+'</b>':o.bank.lv>=1?' · <button type="button" class="link" data-go2="bank">통장 입금에서 확인 →</button>':' · 이름 다름')+'</p>':'')
     +'<div class="cbtn">'+(P.pay?'<button class="btn pri" type="button" data-pay="'+esc(o.orderNo)+'">입금 확인</button>':'')
     +((P.pay||P.ship)?'<button class="btn ghost sm" type="button" data-cancel="'+esc(o.orderNo)+'">주문 취소</button>':'')+'</div>'+'<div class="hist"><button type="button" class="link" data-hist="'+esc(o.orderNo)+'">처리 기록 ▾</button><div class="hbody hidden"></div></div>'+'</div>'; }
 const SHIPL={'택배':'택배','방문수령':'공장 방문 수령','현장전달':'방문객 현장 전달','직접전달':'직접 전달','사내비치':'냉장고 채우기'};
@@ -744,6 +778,98 @@ $('qBody').addEventListener('click',async e=>{
   catch(err){ toast(err.message); c.querySelectorAll('button').forEach(x=>x.disabled=false); }
 });
 
+/* ── 통장 입금 (v0.4.0) ──
+   공유 PC 가 12:40 에 통장 입금을 드라이브에 두면 서버가 12:30~13:30 5분마다 가져와 짝을 맞춘다.
+   확실한 것(금액·이름 같음, 양쪽 하나뿐)은 자동 입금 확인. 여기에는 사람이 볼 것만 나온다.
+   직원(입금): 짝 후보가 있는 입금만 / 대표(통장): 짝 없는 입금·[제외]·[되돌리기]까지 */
+let BK=null, bankBusy=false;
+const LV={2:['이름 같음','ok'],1:['이름 비슷함','wait'],0:['이름 다름','no']};
+const BST={'자동확인':['자동 확인','ok'],'직원확인':['사람 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
+const dt=d=>esc(d.day.slice(5))+' '+esc(d.time);
+async function loadBank(){
+  if(bankBusy) return; bankBusy=true;
+  if(!BK) $('bBody').innerHTML='<p class="load">불러오는 중…</p>';
+  try{ BK=await api('opsBank'); BANKN=BK.todo.length; setCnt('cBank',BANKN); paintBank(); }
+  catch(e){ $('bBody').innerHTML=''; showErr(e.message); }
+  finally{ bankBusy=false; }
+}
+function paintBankBar(){
+  const L=BK.last;
+  let h=L?'통장 가져오기 '+esc((L.at||L.matchAt||'').slice(5,16))+' ('+esc(L.by||'자동')+')'
+    +(L.error?' · <b>오류: '+esc(L.error)+'</b>':' · 새 입금 '+(L.added||0)+'건 · 자동 확인 '+(L.auto||0)+(L.plan?' · 자동 예정(시험) '+L.plan:'')+' · 이미 확인 '+(L.done||0))
+    :'통장 가져오기: 아직 한 번도 돌지 않았습니다 (매일 12:40 공유 PC → 12:45 쯤 서버)';
+  $('bankBar').innerHTML=h;
+}
+function paintBank(){
+  paintBankBar();
+  const P=BK, out=[];
+  if(!P.autoOn) out.push('<div class="note warn2"><b>시험 중</b> — 자동 입금 확인을 아직 하지 않습니다. «자동 확인 예정» 표시가 붙은 입금이 정말 그 주문이 맞는지 봐 주세요. 맞으면 지금처럼 [이 주문으로 입금 확인]을 누르시면 됩니다.</div>');
+  if(P.boss&&P.noSlip) out.push('<p class="note">아마란스 «수금등록» 안 된 입금(주문과 짝 끝난 것) <b>'+P.noSlip+'건</b> — 아마란스 수금등록 화면에서 처리해 주세요.</p>');
+  out.push('<div class="h3" style="margin-top:4px">확인할 입금 <span class="meta">'+P.todo.length+'건</span></div>');
+  out.push(P.todo.length?P.todo.map(bankCard).join(''):'<p class="empty">사람이 확인할 입금이 없습니다 👍</p>');
+  if(P.boss){
+    out.push('<div class="h3">짝이 없는 입금 <span class="meta">'+(P.none||[]).length+'건 · 대표님만 보입니다</span></div>');
+    out.push((P.none||[]).length?P.none.map(noneCard).join(''):'<p class="empty">짝이 없는 입금이 없습니다.</p>');
+  }
+  const D=P.done||[];
+  out.push('<details class="more"'+(D.length&&!P.todo.length?' open':'')+'><summary>처리된 입금 (최근 14일'+(P.boss?' · 제외 전부':'')+' '+D.length+'건)</summary>'
+    +(D.length?'<table class="rtable wide"><thead><tr><th>입금</th><th>입금자</th><th style="text-align:right">금액</th><th>결과</th><th>주문</th><th>처리</th>'+(P.boss?'<th></th>':'')+'</tr></thead><tbody>'
+      +D.map(d=>{ const s=BST[d.status]||[d.status,'wait'];
+        return '<tr><td>'+dt(d)+'</td><td><b>'+esc(d.name)+'</b>'+(d.note?'<small>'+esc(d.note)+'</small>':'')+'</td><td class="n">'+won(d.amount)+'</td><td><span class="st '+s[1]+'">'+esc(s[0])+'</span>'+(P.boss&&d.slip?'<small>아마란스 '+esc(d.slip)+'</small>':'')+'</td>'
+          +'<td class="tel">'+esc(d.orderNo)+'</td><td>'+esc(d.by)+'<small>'+esc(d.at.slice(5))+'</small></td>'
+          +(P.boss?'<td>'+((d.status==='제외'||d.status==='영업아님')?'<button type="button" class="btn ghost sm" data-restore="'+esc(d.key)+'">되돌리기</button>':'')+'</td>':'')+'</tr>'; }).join('')
+      +'</tbody></table>':'<p class="empty">없습니다.</p>')+'</details>');
+  $('bBody').innerHTML=out.join('');
+}
+function bankCard(d){
+  const named=d.cands.filter(c=>c.lv>=1), other=d.cands.filter(c=>c.lv<1);
+  const row=c=>{ const L=LV[c.lv]||LV[0];
+    return '<div class="bcand'+(c.lv<1?' far':'')+'"><div class="bci"><span class="no">'+esc(c.orderNo)+'</span> <span class="tag'+(c.channel==='지인'?' f':'')+'">'+esc(c.channel)+'</span> '
+      +'<b>'+esc(c.payer)+'</b> <span class="meta">주문 '+esc(c.at.slice(5))+' · '+esc(c.who)+' · '+c.qty+'박스</span> <span class="st '+L[1]+'">'+L[0]+'</span>'
+      +(d.auto===c.orderNo?' <span class="st auto">자동 확인 예정</span>':'')+'</div>'
+      +(BK.pay?'<button type="button" class="btn '+(c.lv>=1?'pri':'ghost')+' sm" data-pick="'+esc(d.key)+'|'+esc(c.orderNo)+'">이 주문으로 입금 확인</button>':'')+'</div>'; };
+  return '<div class="card bcard"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · 농협 3405</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
+    +(d.why?'<p class="bwhy">자동으로 하지 않은 이유: '+esc(d.why)+'</p>':'')
+    +named.map(row).join('')
+    +(other.length?(named.length?'<details class="bmore"><summary>금액만 같은 다른 주문 '+other.length+'건 (이름 다름)</summary>'+other.map(row).join('')+'</details>'
+      :'<p class="bwhy warn">금액은 같지만 <b>이름이 같은 주문이 없습니다.</b> 가족·회사 이름으로 넣으셨는지 주문하신 분께 확인한 뒤에 누르세요.</p>'+other.map(row).join('')):'')
+    +'</div>';
+}
+function noneCard(d){
+  return '<div class="card bcard"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · '+esc(d.memo||'')+(d.slip?' · 아마란스 '+esc(d.slip):'')+'</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
+    +(d.note?'<p class="bwhy">'+esc(d.note)+'</p>':'')
+    +'<div class="cbtn"><button type="button" class="btn ghost sm" data-excl="'+esc(d.key)+'">제외 — 영업 아님</button>'
+    +'<span class="wbin"><input placeholder="주문번호 (예: F261012-003)" data-link="'+esc(d.key)+'" maxlength="12"><button type="button" class="btn pri sm" data-linkgo="'+esc(d.key)+'">이 주문에 연결</button></span></div></div>';
+}
+function bankFind(k){ const B=BK||{}; return (B.todo||[]).concat(B.none||[],B.done||[]).find(x=>x.key===k); }
+$('bBody').addEventListener('click',e=>{
+  const t=e.target.closest('[data-pick],[data-excl],[data-restore],[data-linkgo]'); if(!t) return;
+  const D=t.dataset;
+  if(D.pick||D.linkgo){
+    const [k,no0]=D.pick?D.pick.split('|'):[D.linkgo,''], d=bankFind(k); if(!d) return;
+    const no=no0||(document.querySelector('[data-link="'+k+'"]').value||'').trim().toUpperCase();
+    if(!/^[FS]\d{6}-\d{3}$/.test(no)){ toast('주문번호를 확인해 주세요. 예: F261012-003'); return; }
+    const c=d.cands&&d.cands.find(x=>x.orderNo===no), lv=c?c.lv:-1;
+    return modal('<h3>이 주문의 입금이 맞나요?</h3><p class="meta">통장 '+dt(d)+'</p><div class="big">'+esc(d.name)+' <small>님</small></div><div class="big">'+won(d.amount)+'</div>'
+      +'<p>주문 <b>'+esc(no)+'</b>'+(c?' · 입금자 <b>'+esc(c.payer)+'</b> · '+c.qty+'박스':'')+'</p>'
+      +(lv===0?'<p class="mnote warn">이름이 다릅니다. 주문하신 분께 확인하셨을 때만 누르세요.</p>':lv<0?'<p class="mnote warn">후보 목록에 없는 주문입니다. 서버가 금액·상태를 다시 확인합니다.</p>':'')
+      +'<p class="mnote">누르면 «주문확인»(출고할 주문)으로 넘어갑니다. 이미 입금 확인된 주문이면 «이미 확인된 주문»으로 연결만 됩니다.</p>','입금 확인',
+      async()=>{ const r=await api('opsBankPick',{key:k, orderNo:no}); toast(r.linked?'이미 확인된 주문에 연결했습니다.':d.name+' 님 '+won(d.amount)+' → '+no+' 입금 확인'); BK=null; await loadBank(); loadBoard(true); });
+  }
+  if(D.excl){ const d=bankFind(D.excl); if(!d) return;
+    return modal('<h3>영업 아닌 돈으로 제외</h3><div class="big">'+esc(d.name)+'</div><div class="big">'+won(d.amount)+'</div><p class="meta">'+dt(d)+' 입금</p>'
+      +'<select id="mWhy" class="inp" style="width:100%;margin-top:10px"><option value="">사유를 골라 주세요</option><option>투자금</option><option>대여금</option><option>이자</option><option>회사 간 이체</option><option>기타</option></select>'
+      +'<input id="mMemo" placeholder="메모 (선택)"><p class="mnote">지우지 않습니다. 직원 화면에 안 보이게만 하고, 언제든 [되돌리기] 할 수 있습니다.</p>','제외',
+      async()=>{ const w=$('mWhy').value; if(!w) throw new Error('사유를 골라 주세요'); const m=$('mMemo').value.trim();
+        await api('opsBankSet',{key:d.key, act:'exclude', reason:w+(m?' · '+m:'')}); toast('제외했습니다.'); await loadBank(); }); }
+  if(D.restore){ const d=bankFind(D.restore); if(!d) return;
+    return modal('<h3>되돌리기</h3><p><b>'+esc(d.name)+'</b> '+won(d.amount)+' · '+dt(d)+'</p><p class="mnote">«대기»로 돌아가 다시 주문과 짝을 맞춥니다.</p>','되돌리기',
+      async()=>{ await api('opsBankSet',{key:d.key, act:'restore'}); toast('되돌렸습니다.'); await loadBank(); }); }
+});
+$('bankNow').onclick=async()=>{ const b=$('bankNow'); b.disabled=true; b.textContent='가져오는 중…';
+  try{ const r=await api('opsBankNow'); toast(r.error?'드라이브 오류: '+r.error:'새 입금 '+(r.added||0)+'건 · 자동 확인 '+(r.auto||0)+'건'+(r.plan?' · 자동 예정(시험) '+r.plan+'건':'')); BK=null; await loadBank(); loadBoard(true); }
+  catch(e){ toast(e.message); } finally{ b.disabled=false; b.textContent='지금 가져오기'; } };
+
 /* ── 확인창 ── */
 function modal(html,yes,fn){
   $('mbox').innerHTML=html+'<div class="mbtns"><button type="button" class="no">취소</button><button type="button" class="yes">'+esc(yes)+'</button></div>';
@@ -776,7 +902,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(tok){ T.token=tok; const cu=cget('_u');
     if(cu&&!/^buy/.test(NEXT)){ T.user=cu; BC=cget('_b'); afterLogin(); return; }   // v0.3.5 기다리지 않고 바로 — 서버 확인은 주문 현황을 불러오며 (만료면 로그인 화면으로)
     $('gateMsg').style.color='#cfe0f2'; $('gateMsg').textContent='로그인 확인 중…';
-    api('opsBoard').then(r=>{ T.user=r.user; cset('_u',r.user); if(!r.orders||!r.orders.length) BC=null; else BC={orders:r.orders,askOpen:r.askOpen||0,track:r.track||null}; $('gateMsg').textContent=''; afterLogin(); }).catch(()=>{ T.token=null; ss.set(null); $('gateMsg').textContent=''; }); }
+    api('opsBoard').then(r=>{ T.user=r.user; cset('_u',r.user); if(!r.orders||!r.orders.length) BC=null; else BC={orders:r.orders,askOpen:r.askOpen||0,track:r.track||null,bankTodo:r.bankTodo||0,bankAuto:!!r.bankAuto}; $('gateMsg').textContent=''; afterLogin(); }).catch(()=>{ T.token=null; ss.set(null); $('gateMsg').textContent=''; }); }
 });
 /* 임직원 주문(buy/)에서 로그인하러 왔으면 로그인 뒤 그리로 돌려보낸다 */
 let NEXT='';
