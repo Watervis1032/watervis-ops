@@ -393,7 +393,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.2</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.3</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -406,7 +406,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.2';
+const VERSION='ops-v0.4.3';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -469,7 +469,7 @@ function enter(){
   const u=T.user, P=u.perms||{};
   $('who').textContent=u.disp||u.name+' 님';
   document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P));
-  document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask);
+  document.querySelector('[data-t=ask]').classList.toggle('hidden',!canAsk(P));
   document.querySelector('[data-t=bank]').classList.toggle('hidden',!canBank(P));
   $('trackNow').classList.toggle('hidden',!P.ship);
   screen('app');
@@ -477,8 +477,9 @@ function enter(){
   go(['orders','bank','report','ask'].indexOf(h)>=0&&allowed(h)?h:'home',true);
 }
 const canSee=P=>!!(P.view||P.pay||P.ship);   // v0.3.4 «보기» 권한 = 주문 현황을 보기만
-const canBank=P=>!!(P.pay||P.bank);           // v0.4.0 통장 입금 = 입금(직원) 또는 통장(대표)
-const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?canSee(P):t==='bank'?canBank(P):t==='ask'?P.ask:true; };
+const canBank=P=>!!(P.pay||P.bank||P.look);   // v0.4.0 통장 입금 = 입금(직원)·통장(대표) · v0.4.3 «보기»는 읽기만
+const canAsk=P=>!!(P.ask||P.look);              // v0.4.3 문의 — «보기»는 읽기만 (답변 칸 없음)
+const allowed=t=>{ const P=(T.user&&T.user.perms)||{}; return t==='orders'?canSee(P):t==='bank'?canBank(P):t==='ask'?canAsk(P):true; };
 $('tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b) go(b.dataset.t); });
 function go(t,noHash){
   if(!allowed(t)) t='home';
@@ -514,7 +515,7 @@ function paintHome(askOpen){
     '<button type="button" class="pbtn" data-go="orders">주문 현황 열기 →</button>'));
   cards.push(card('c2','🛒','임직원 주문',(u.canBuy?'가족·지인에게 임직원가로 보내기, ':'')+'회사 출고(샘플·선물·방문객·냉장고) 기록, 내 주문·배송 확인.',
     '<div class="pbtns">'+(u.canBuy?'<a class="pbtn" href="buy/">주문하기 →</a>':'')+'<a class="pbtn alt" href="buy/#free">회사 출고 →</a><a class="pbtn alt" href="buy/#mine">내 주문 →</a></div>'));
-  if(P.ask) cards.push(card('c3','💬','문의',askOpen?'답변을 기다리는 문의 <b>'+askOpen+'</b>건.':'답변을 기다리는 문의가 없습니다.'+'<br>적은 답변은 고객이 주문 조회에서 문의번호로 봅니다.',
+  if(canAsk(P)) cards.push(card('c3','💬','문의',askOpen?'답변을 기다리는 문의 <b>'+askOpen+'</b>건.':'답변을 기다리는 문의가 없습니다.'+'<br>적은 답변은 고객이 주문 조회에서 문의번호로 봅니다.',
     '<button type="button" class="pbtn" data-go="ask">문의 열기 →</button>'));
   cards.push(card('c4','📊','출고 현황 (월별)','달마다 판매 요약과 회사 출고(샘플·선물·방문객·냉장고)를 종류별·사람별로. 세무사용 엑셀 내려받기.',
     '<button type="button" class="pbtn" data-go="report">출고 현황 열기 →</button>'));
@@ -546,7 +547,7 @@ async function loadBoard(quiet){
   if(BC){ const c=BC; BC=null; O=c.orders||[]; setCnt('cAsk',c.askOpen||0); BANKN=c.bankTodo||0; BANKAUTO=!!c.bankAuto; setCnt('cBank',BANKN); paintTrack(c.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(c.askOpen||0); }   // 기억해 둔 것 먼저 보여 주고
   try{
     const r=await api('opsBoard',tab==='orders'&&RANGE?RANGE:{}); const before=JSON.stringify((T.user||{}).perms); T.user=r.user||T.user; O=r.orders||[]; for(const k in HIST) delete HIST[k];
-    if(JSON.stringify(T.user.perms)!==before){ const P=T.user.perms||{}; document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P)); document.querySelector('[data-t=ask]').classList.toggle('hidden',!P.ask); document.querySelector('[data-t=bank]').classList.toggle('hidden',!canBank(P)); $('trackNow').classList.toggle('hidden',!P.ship); if(!allowed(tab)){ BC=null; boardBusy=false; go('home'); return; } }   // 권한이 바뀌었으면 탭을 다시
+    if(JSON.stringify(T.user.perms)!==before){ const P=T.user.perms||{}; document.querySelector('[data-t=orders]').classList.toggle('hidden',!canSee(P)); document.querySelector('[data-t=ask]').classList.toggle('hidden',!canAsk(P)); document.querySelector('[data-t=bank]').classList.toggle('hidden',!canBank(P)); $('trackNow').classList.toggle('hidden',!P.ship); if(!allowed(tab)){ BC=null; boardBusy=false; go('home'); return; } }   // 권한이 바뀌었으면 탭을 다시
     cset('_u',T.user); if(!RANGE) cset('_b',{orders:O, askOpen:r.askOpen||0, track:r.track||null, bankTodo:r.bankTodo||0, bankAuto:!!r.bankAuto});
     BANKN=r.bankTodo||0; BANKAUTO=!!r.bankAuto; setCnt('cBank',BANKN); setCnt('cAsk',r.askOpen||0); paintTrack(r.track); paintOrders(); paintPInfo(); if(tab==='home') paintHome(r.askOpen||0);
   }catch(e){ showErr(e.message); }
@@ -816,7 +817,7 @@ function askCard(a,open){
     +'</div>';
 }
 function paintAsks(){
-  $('qBody').innerHTML=(QA.open.length?QA.open.map(a=>askCard(a,true)).join(''):'<p class="empty">답을 기다리는 문의가 없습니다.</p>')
+  $('qBody').innerHTML=(QA.open.length?QA.open.map(a=>askCard(a,!!(T.user.perms||{}).ask)).join(''):'<p class="empty">답을 기다리는 문의가 없습니다.</p>')
     +(QA.done.length?'<details class="more"><summary>끝난 문의 (최근 60일 '+QA.done.length+'건)</summary>'+QA.done.map(a=>askCard(a,false)).join('')+'</details>':'');
 }
 $('qBody').addEventListener('click',async e=>{
@@ -854,6 +855,8 @@ function paintBankBar(){
 function paintBank(){
   paintBankBar();
   const P=BK, out=[];
+  $('bankNow').classList.toggle('hidden',!(P.pay||P.boss));
+  if(!P.pay&&!P.boss) out.push('<p class="note"><b>보기 전용</b> — 입금 확인은 담당자(박재용·조원현)가 합니다. 주문 입금으로 보이는 것만 나옵니다.</p>');
   if(!P.autoOn) out.push('<div class="note warn2"><b>시험 중</b> — 자동 입금 확인을 아직 하지 않습니다. «자동 확인 예정» 표시가 붙은 입금이 정말 그 주문이 맞는지 봐 주세요. 맞으면 지금처럼 [이 주문으로 입금 확인]을 누르시면 됩니다.</div>');
   if(P.boss&&P.noSlip) out.push('<p class="note">아마란스 «수금등록» 안 된 입금(주문과 짝 끝난 것) <b>'+P.noSlip+'건</b> — 아마란스 수금등록 화면에서 처리해 주세요.</p>');
   out.push('<div class="h3">확인할 입금 <span class="meta">'+P.todo.length+'건 · 위 내역의 «확인 필요» 줄과 같은 입금입니다</span></div>');
