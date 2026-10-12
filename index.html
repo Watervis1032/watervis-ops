@@ -399,7 +399,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.9</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.10</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -412,7 +412,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.9';
+const VERSION='ops-v0.4.10';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -855,7 +855,7 @@ async function loadBank(){
 function paintBankBar(){
   const L=BK.last;
   let h=L?'통장 가져오기 '+esc((L.at||L.matchAt||'').slice(5,16))+' ('+esc(L.by||'자동')+')'
-    +(L.error?' · <b>오류: '+esc(L.error)+'</b>':' · 새 입금 '+(L.added||0)+'건 · 자동 확인 '+(L.auto||0)+(L.plan?' · 자동 예정(시험) '+L.plan:'')+' · 이미 확인 '+(L.done||0)+(L.bad?' · <b>읽지 못한 줄 '+L.bad+'건 — 이번 회차는 자동 확인을 멈췄습니다</b>':''))
+    +(L.error?' · <b>오류: '+esc(L.error)+'</b>':' · 새 입금 '+(L.added||0)+'건 · 자동 확인 '+(L.auto||0)+(L.plan?' · 자동 예정(시험) '+L.plan:'')+' · 이미 확인 '+(L.done||0)+(L.bad?' · <b>읽지 못한 줄 '+L.bad+'건</b>':'')+(L.autoOn&&L.stop?' · <b>이번 회차 자동 확인 멈춤 ('+esc(L.stop)+')</b>':'')+(L.fix?' · <b>복구 필요 '+L.fix+'건 (대표님 확인)</b>':''))
     :'통장 가져오기: 아직 한 번도 돌지 않았습니다 (매일 12:40 공유 PC → 12:45 쯤 서버)';
   $('bankBar').innerHTML=h;
 }
