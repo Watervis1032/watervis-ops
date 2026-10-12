@@ -219,6 +219,10 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
 .btbl .link{white-space:nowrap}
 .btbl tr.k-todo td,.btbl tr.k-plan td{background:#fffaf0;cursor:pointer}
 .btbl tr.k-off td{color:#9aa4b1}
+.bbox.many{box-shadow:inset 0 -18px 14px -12px rgba(6,26,51,.18)}
+.bbox.open{max-height:none!important;overflow:visible}
+.bbox::-webkit-scrollbar{width:10px;height:10px}.bbox::-webkit-scrollbar-thumb{background:#c3ccd7;border-radius:6px}.bbox::-webkit-scrollbar-track{background:#f3f5f8}
+.bkmore{display:block;width:100%;margin:6px 0 0;border:1px dashed #c3ccd7;background:#fff;border-radius:10px;padding:9px;font-size:14px;color:var(--navy2);font-weight:600;cursor:pointer}
 .bcard.flash{box-shadow:0 0 0 3px var(--gold)}
 .bproof{margin:0 0 8px;font-size:13.5px;background:var(--okbg);color:#14583d;border-radius:9px;padding:6px 10px}
 .bproof.none{background:#f3f5f8;color:#4b5868}
@@ -347,6 +351,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
         <button type="button" class="btn pri sm" id="pGo">조회</button>
         <span class="qk"><button type="button" class="chip" data-pq="today">오늘</button><button type="button" class="chip" data-pq="yday">어제</button><button type="button" class="chip" data-pq="week">이번 주</button><button type="button" class="chip" data-pq="month">이번 달</button><button type="button" class="chip on" data-pq="">진행 중 전체</button></span>
         <span class="sp"></span>
+        <button type="button" class="btn ghost sm hidden" id="erpBtn" title="입금 확인된 판매 주문을 아마란스 주문등록 엑셀업로드 양식으로">아마란스 주문등록</button>
         <button type="button" class="btn pri sm hidden" id="hjBtn" title="주문확인 단계의 택배만, 한진 송장 프로그램에 올리는 양식">한진 업로드 엑셀</button>
         <button type="button" class="btn gold sm" id="xlsBtn">엑셀 내려받기</button>
       </div>
@@ -364,15 +369,16 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
         <button class="btn ghost" type="button" id="bankNow">지금 가져오기</button>
         <button class="btn ghost" type="button" onclick="loadBank()">새로 고침</button></div>
       <p class="note">매일 <b>12:40</b> 농협 3405 통장 입금을 자동으로 가져옵니다. 금액·이름이 딱 맞고 다른 후보가 없으면 <b>자동으로 입금 확인</b>되어 «주문확인»으로 넘어갑니다.<br>
-        여기에는 <b>사람이 봐야 할 입금</b>만 나옵니다. 12:40 뒤에 들어온 입금은 지금처럼 주문 현황에서 [입금 확인]을 눌러 주세요 (다음 날 자동으로 짝만 지어집니다).</p>
+        여기에는 <b>담당자가 확인해야 할 입금</b>만 나옵니다. 12:40 뒤에 들어온 입금은 지금처럼 주문 현황에서 [입금 확인]을 눌러 주세요 (다음 날 자동으로 짝만 지어집니다).</p>
       <div class="h3" style="margin-top:4px">통장 입금 내역 <span class="meta" id="bkSub">농협 3405 · 주문 입금으로 보이는 것만</span></div>
       <div class="period">
         <input class="inp" type="date" id="bkFrom"><span>~</span><input class="inp" type="date" id="bkTo">
         <button type="button" class="btn pri sm" id="bkGo">조회</button>
         <span class="qk"><button type="button" class="chip" data-bq="today">오늘</button><button type="button" class="chip" data-bq="yday">어제</button><button type="button" class="chip on" data-bq="7">최근 7일</button><button type="button" class="chip" data-bq="month">이번 달</button></span>
       </div>
-      <div class="bbox" id="bkBox"><p class="load">불러오는 중…</p></div>
       <p class="pinfo" id="bkSum"></p>
+      <div class="bbox" id="bkBox"><p class="load">불러오는 중…</p></div>
+      <button type="button" class="bkmore hidden" id="bkMore"></button>
       <div id="bBody"></div>
       <div class="trackrow"><p class="track" id="bankBar"></p></div>
     </section>
@@ -393,7 +399,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.3</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.6</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -406,7 +412,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.3';
+const VERSION='ops-v0.4.6';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -519,7 +525,7 @@ function paintHome(askOpen){
     '<button type="button" class="pbtn" data-go="ask">문의 열기 →</button>'));
   cards.push(card('c4','📊','출고 현황 (월별)','달마다 판매 요약과 회사 출고(샘플·선물·방문객·냉장고)를 종류별·사람별로. 세무사용 엑셀 내려받기.',
     '<button type="button" class="pbtn" data-go="report">출고 현황 열기 →</button>'));
-  if(canBank(P)) cards.push(card('c5','🏦','통장 입금',(BANKN?'사람이 확인할 입금 <b>'+BANKN+'</b>건.':'확인할 입금이 없습니다.')+'<br>매일 12:40 농협 3405 입금을 가져와 확실한 것은 자동으로 입금 확인'+(BANKAUTO?'':' <b>(지금은 시험 중 — 자동 예정만 표시)</b>')+'.',
+  if(canBank(P)) cards.push(card('c5','🏦','통장 입금',(BANKN?'담당자가 확인할 입금 <b>'+BANKN+'</b>건.':'확인할 입금이 없습니다.')+'<br>매일 12:40 농협 3405 입금을 가져와 확실한 것은 자동으로 입금 확인'+(BANKAUTO?'':' <b>(지금은 시험 중 — 자동 예정만 표시)</b>')+'.',
     '<button type="button" class="pbtn" data-go="bank">통장 입금 열기 →</button>'));
   $('hCards').innerHTML=cards.join('');
 }
@@ -686,10 +692,10 @@ function paintPInfo(){ const n=O.length;
   const S=ST.find(x=>x.k===stage), cnt=stage?(stage==='취소'?inStage('취소').reduce((a,o)=>a+o.dests.length,0):inStage(stage).reduce((a,o)=>a+destsIn(o,stage).length,0)):0;
   $('xlsBtn').textContent='엑셀 내려받기'+(S?' ('+S.t+' '+cnt+'곳)':'');
   const hj=hjRows().length, P=(T.user&&T.user.perms)||{};
-  $('hjBtn').classList.toggle('hidden',!(stage==='확인'&&P.ship&&!RANGE)); $('hjBtn').textContent='한진 업로드 엑셀 ('+hj+'곳)'; }
+  $('hjBtn').classList.toggle('hidden',!(stage==='확인'&&P.ship&&!RANGE)); $('erpBtn').classList.toggle('hidden',!P.erp); $('hjBtn').textContent='한진 업로드 엑셀 ('+hj+'곳)'; }
 /* ── 한진 업로드 엑셀 (v0.4.2) — 대표님이 받으신 «한진택배 송장» 양식 그대로 (18칸, 빈칸 C·D·E·I·J·K·Q, 빈 Sheet1)
    주문확인 단계(송장 아직 없음)의 택배 받는 곳만. 특기사항 = 받는곳번호(주문행ID) + 배송 요청사항
-   보내는 분·전화·주소·품목·타입·지불조건은 아래 값. 바뀌면 박재용씨가 엑셀에서 고쳐 올려도 된다 */
+   보내는 분·전화·주소·품목·타입·지불조건은 아래 값. 바뀌면 공장 담당자가 엑셀에서 고쳐 올려도 된다 */
 const HJ={sender:'(주)워터비스코퍼레이션', tel:'033-672-1032', from:'강원특별자치도 양양군 현남면 원포1길 53', item:'해양심층수 워터비스', type:'c', pay:'신용'};
 const HJ_HEAD=['보내시는분','전화번호','','','','보낸분주소','받는분','받는분 전화','','','','주소','수량','품목','타입','지불조건','','특기사항'];
 function hjRows(){ const out=[];
@@ -832,11 +838,12 @@ $('qBody').addEventListener('click',async e=>{
 
 /* ── 통장 입금 (v0.4.0) ──
    공유 PC 가 12:40 에 통장 입금을 드라이브에 두면 서버가 12:30~13:30 5분마다 가져와 짝을 맞춘다.
-   확실한 것(금액·이름 같음, 양쪽 하나뿐)은 자동 입금 확인. 여기에는 사람이 볼 것만 나온다.
+   확실한 것(금액·이름 같음, 양쪽 하나뿐)은 자동 입금 확인. 여기에는 담당자가 확인할 것만 나온다.
    직원(입금): 짝 후보가 있는 입금만 / 대표(통장): 짝 없는 입금·[제외]·[되돌리기]까지 */
-let BK=null, bankBusy=false, BKR=null;
+let BK=null, bankBusy=false, BKR=null, BKOPEN=false;
+$('bkMore').onclick=()=>{ BKOPEN=!BKOPEN; paintBankList(); if(!BKOPEN) $('bkBox').scrollIntoView({block:'nearest'}); };
 const LV={2:['이름 같음','ok'],1:['이름 비슷함','wait'],0:['이름 다름','no']};
-const BST={'자동확인':['자동 확인','ok'],'직원확인':['사람 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
+const BST={'자동확인':['자동 확인','ok'],'직원확인':['담당자 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
 const dt=d=>esc(d.day.slice(5))+' '+esc(d.time);
 async function loadBank(){
   if(bankBusy) return; bankBusy=true;
@@ -856,11 +863,11 @@ function paintBank(){
   paintBankBar();
   const P=BK, out=[];
   $('bankNow').classList.toggle('hidden',!(P.pay||P.boss));
-  if(!P.pay&&!P.boss) out.push('<p class="note"><b>보기 전용</b> — 입금 확인은 담당자(박재용·조원현)가 합니다. 주문 입금으로 보이는 것만 나옵니다.</p>');
+  if(!P.pay&&!P.boss) out.push('<p class="note"><b>보기 전용</b> — 입금 확인은 공장 담당자가 합니다. 주문 입금으로 보이는 것만 나옵니다.</p>');
   if(!P.autoOn) out.push('<div class="note warn2"><b>시험 중</b> — 자동 입금 확인을 아직 하지 않습니다. «자동 확인 예정» 표시가 붙은 입금이 정말 그 주문이 맞는지 봐 주세요. 맞으면 지금처럼 [이 주문으로 입금 확인]을 누르시면 됩니다.</div>');
   if(P.boss&&P.noSlip) out.push('<p class="note">아마란스 «수금등록» 안 된 입금(주문과 짝 끝난 것) <b>'+P.noSlip+'건</b> — 아마란스 수금등록 화면에서 처리해 주세요.</p>');
   out.push('<div class="h3">확인할 입금 <span class="meta">'+P.todo.length+'건 · 위 내역의 «확인 필요» 줄과 같은 입금입니다</span></div>');
-  out.push(P.todo.length?P.todo.map(bankCard).join(''):'<p class="empty">사람이 확인할 입금이 없습니다 👍</p>');
+  out.push(P.todo.length?P.todo.map(bankCard).join(''):'<p class="empty">담당자가 확인할 입금이 없습니다 👍</p>');
   if(P.boss){
     out.push('<div class="h3">짝이 없는 입금 <span class="meta">'+(P.none||[]).length+'건 · 대표님만 보입니다</span></div>');
     out.push((P.none||[]).length?P.none.map(noneCard).join(''):'<p class="empty">짝이 없는 입금이 없습니다.</p>');
@@ -880,15 +887,18 @@ const BKK={done:null, plan:['자동 확인 예정','auto'], todo:['확인 필요
 /* 통장 입금 내역 (v0.4.1) — 날짜로 조회, 상자 안에서 스크롤. 서버가 주문 입금으로 보이는 줄만 보낸다 */
 function paintBankList(){
   const L=BK.list||[];
-  if(!L.length){ $('bkBox').innerHTML='<p class="empty" style="margin:0;border:0">이 기간에 주문 입금이 없습니다.</p>'; $('bkSum').textContent=''; return; }
+  if(!L.length){ $('bkMore').classList.add('hidden'); $('bkBox').innerHTML='<p class="empty" style="margin:0;border:0">이 기간에 주문 입금이 없습니다.</p>'; $('bkSum').textContent=''; return; }
   $('bkBox').innerHTML='<table class="btbl"><thead><tr><th>입금 일시</th><th>입금자</th><th class="n">금액</th><th>방법</th><th>결과</th><th>주문</th></tr></thead><tbody>'
     +L.map(d=>{ const k=BKK[d.kind], s=k||BST[d.status]||[d.status,'wait'];
       const res='<span class="st '+s[1]+'">'+esc(s[0])+'</span>'+(d.kind==='done'&&d.by?'<small>'+esc(d.by)+'</small>':'');
       const ord=d.orderNo?'<span class="tel">'+esc(d.orderNo)+'</span>'+(d.oPayer?'<small>'+esc(d.oPayer)+(d.oWho&&d.oWho!==d.oPayer?' · 주문 '+esc(d.oWho):'')+'</small>':''):(d.kind==='todo'||d.kind==='plan'?'<button type="button" class="link" data-jump="'+esc(d.key)+'">확인하러 가기 ↓</button>':'');
       return '<tr class="k-'+d.kind+'"'+(d.kind==='todo'||d.kind==='plan'?' data-jump="'+esc(d.key)+'"':'')+'><td class="tel">'+esc(d.day.slice(5))+' '+esc(d.time)+'</td><td><b>'+esc(d.name)+'</b></td><td class="n">'+won(d.amount)+'</td><td>'+esc(d.memo)+'</td><td>'+res+'</td><td>'+ord+'</td></tr>'; }).join('')
     +'</tbody></table>';
+  const box=$('bkBox'), more=$('bkMore'), many=L.length>6;   // v0.4.5 태블릿은 스크롤바가 안 보여 → 몇 건인지 위에 쓰고, 아래 [펼치기]
+  box.classList.toggle('many',many&&!BKOPEN); box.classList.toggle('open',BKOPEN);
+  more.classList.toggle('hidden',!many); more.textContent=BKOPEN?'▲ 접기':'▼ 전체 '+L.length+'건 펼치기 (지금 상자 안에서 위로 밀어도 보입니다)';
   const sum=L.filter(d=>d.kind!=='off'&&d.kind!=='none').reduce((a,d)=>a+d.amount,0), n=k=>L.filter(d=>d.kind===k).length;
-  $('bkSum').innerHTML=esc(BK.range.from.slice(5))+' ~ '+esc(BK.range.to.slice(5))+' · <b>'+L.length+'건</b> · 주문 입금 합계 <b>'+won(sum)+'</b> · 짝 끝남 '+n('done')+' · 확인 필요 '+(n('todo')+n('plan'))+(BK.boss?' · <span class="meta">대표님 화면에는 짝 없는 입금·제외한 돈도 보입니다 (직원 화면에는 안 보임)</span>':'');
+  $('bkSum').innerHTML='<b>'+L.length+'건</b> · '+esc(BK.range.from.slice(5))+' ~ '+esc(BK.range.to.slice(5))+' · 주문 입금 합계 <b>'+won(sum)+'</b> · 짝 끝남 '+n('done')+' · 확인 필요 '+(n('todo')+n('plan'))+(BK.boss?' · <span class="meta">대표님 화면에는 짝 없는 입금·제외한 돈도 보입니다 (직원 화면에는 안 보임)</span>':'');
 }
 $('bkBox').addEventListener('click',e=>{ const t=e.target.closest('[data-jump]'); if(!t) return; const c=document.getElementById('bk-'+t.dataset.jump);
   if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),1600); } });
@@ -946,6 +956,36 @@ $('bBody').addEventListener('click',e=>{
 $('bankNow').onclick=async()=>{ const b=$('bankNow'); b.disabled=true; b.textContent='가져오는 중…';
   try{ const r=await api('opsBankNow'); toast(r.error?'드라이브 오류: '+r.error:'새 입금 '+(r.added||0)+'건 · 자동 확인 '+(r.auto||0)+'건'+(r.plan?' · 자동 예정(시험) '+r.plan+'건':'')); BK=null; await loadBank(); loadBoard(true); }
   catch(e){ toast(e.message); } finally{ b.disabled=false; b.textContent='지금 가져오기'; } };
+
+
+/* ── 아마란스 주문등록 엑셀 (v0.4.4) ── 풍림과 같은 «주문등록 엑셀업로드» 양식 (머리 3줄 + 줄마다 32칸)
+   서버가 값을 계산하고(풍림 식 그대로) 50_ERP연동 에 «엑셀만듦»을 적는다. 화면은 머리를 붙여 파일로만 만든다 */
+const ERP_HEAD=[["거래구분", "주문일자", "고객코드", "환종", "환율", "과세구분", "단가구분", "납품처코드", "담당자코드", "LC번호", "관리번호", "비고(건)", "품번", "납기일", "출하예정일", "주문수량", "단가유형", "부가세미포함단가", "부가세포함단가", "공급가", "부가세", "합계액", "외화단가", "외화금액", "의뢰여부", "검사여부", "관리구분코드", "프로젝트코드", "비고(내역)", "견적번호", "견적순번", "SET모품목코드"], ["SO_FG", "SO_DT", "TR_CD", "EXCH_CD", "EXCH_RT", "VAT_FG", "UMVAT_FG", "SHIP_CD", "PLN_CD", "LC_NB", "MGM_NM", "REMARK_DC", "ITEM_CD", "DUE_DT", "SHIPREQ_DT", "SO_QT", "UM_FG", "SO_UM", "VAT_UM", "SOG_AM", "SOV_AM", "SOH_AM", "EXCH_UM", "EXCH_AM", "REQ_FG", "QC_FG", "MGMT_CD", "PJT_CD", "REMARKD_DC", "EST_NB", "EST_SQ", "SETITEM_CD"], ["타입 : 문자\n길이 : 1\n필수 : True\n설명 : 숫자만 입력하세요. (0.DOMESTIC, 1.LOCAL L/C, 2.구매승인서, 3.MASTER L/C, 4.T/T, 5.D/A, 6.D/P)", "타입 : 날짜\n길이 : 8\n필수 : True\n설명 : 숫자 기준 8자리를 입력 하세요.", "타입 : 문자\n길이 : 10\n필수 : True\n설명 : 영문/숫자 기준 10자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 3\n필수 : True\n설명 : 영문/숫자 기준 3자리(최대)를 입력 하세요.", "타입 : 숫자\n길이 : 17,6\n필수 : True\n설명 : 숫자 기준 17,6자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 1\n필수 : True\n설명 : 숫자만 입력하세요. (0.매출과세, 1.수출영세, 2.매출면세, 3.매출기타)", "타입 : 문자\n길이 : 1\n필수 : True\n설명 : 숫자만 입력하세요 (0.부가세미포함단가, 1.부가세포함단가)", "타입 : 문자\n길이 : 5\n필수 : False\n설명 : 영문/숫자 기준 5자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 5\n필수 : False\n설명 : 영문/숫자 기준 5자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 20\n필수 : False\n설명 : 영문/숫자 기준 20자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 20\n필수 : False\n설명 : 영문/숫자 기준 20자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 60\n필수 : False\n설명 : 영문/숫자 기준 60자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 30\n필수 : True\n설명 : 영문/숫자 기준 30자리(최대)를 입력 하세요.", "타입 : 날짜\n길이 : 8\n필수 : True\n설명 : 숫자 기준 8자리를 입력 하세요.", "타입 : 날짜\n길이 : 8\n필수 : True\n설명 : 숫자 기준 8자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,6\n필수 : True\n설명 : 숫자 기준 17,6자리를 입력 하세요.", "타입 : 문자\n길이 : 10\n필수 : False\n설명 : 영문/숫자 기준 10자리(최대)를 입력 하세요.", "타입 : 숫자\n길이 : 17,6\n필수 : False\n설명 : 숫자 기준 17,6자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,6\n필수 : False\n설명 : 숫자 기준 17,6자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,4\n필수 : False\n설명 : 숫자 기준 17,4자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,4\n필수 : False\n설명 : 숫자 기준 17,4자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,4\n필수 : False\n설명 : 숫자 기준 17,4자리를 입력 하세요.", "타입 : 숫자\n길이 : 17,6\n필수 : False\n설명 : 숫자 기준 17,6자리를 입력 하세요.(숫자만 입력(소숫점자리수 정확히 입력))", "타입 : 숫자\n길이 : 17,4\n필수 : False\n설명 : 숫자 기준 17,4자리를 입력 하세요.(숫자만 입력(소숫점자리수 정확히 입력))", "타입 : 문자\n길이 : 1\n필수 : False\n설명 : 숫자만 입력하세요. (0.부, 1.여)", "타입 : 문자\n길이 : 1\n필수 : False\n설명 : 숫자만 입력하세요. (0. 무검사, 1. 검사)", "타입 : 문자\n길이 : 10\n필수 : False\n설명 : 영문/숫자 기준 10자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 10\n필수 : False\n설명 : 영문/숫자 기준 10자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 60\n필수 : False\n설명 : 영문/숫자 기준 60자리(최대)를 입력 하세요.", "타입 : 문자\n길이 : 12\n필수 : False\n설명 : 영문/숫자 기준 12자리(최대)를 입력 하세요.", "타입 : 숫자\n길이 : 5,0\n필수 : False\n설명 : 숫자 기준 5자리를 입력 하세요.", "타입 : 문자\n길이 : 30\n필수 : False\n설명 : 문자 기준 30자리(최대)를 입력 하세요."]];
+async function erpFile(rows,batch){ await loadXlsx();
+  const ws=XLSX.utils.aoa_to_sheet(ERP_HEAD.concat(rows.map(r=>r.map(v=>v===''?null:v))));
+  ws['!cols']=ERP_HEAD[0].map((h,i)=>({wch:[2,12,28].indexOf(i)>=0?12:i===12?14:i===28?30:10}));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'등록');
+  XLSX.writeFile(wb,'아마란스_주문등록_'+batch+'.xlsx'); }
+async function erpOpen(){
+  let r; try{ r=await api('opsErp'); }catch(e){ toast(e.message); return; }
+  const L=r.orders, sum=L.reduce((a,o)=>a+o.total,0), lines=L.reduce((a,o)=>a+o.lines,0);
+  const list=L.length?'<div class="bbox" style="max-height:220px;margin:8px 0"><table class="btbl"><thead><tr><th>입금일</th><th>주문</th><th>입금자</th><th class="n">금액</th></tr></thead><tbody>'
+      +L.map(o=>'<tr><td class="tel">'+esc(o.paidAt.slice(5))+'</td><td class="tel">'+esc(o.orderNo)+'</td><td>'+esc(o.payer)+'</td><td class="n">'+won(o.total)+'</td></tr>').join('')+'</tbody></table></div>'
+    :'<p class="mnote">올릴 주문이 없습니다. (입금 확인된 판매 주문 중 아직 엑셀을 안 만든 것만 나옵니다)</p>';
+  const miss=r.missing.length?'<p class="mnote warn">먼저 채울 것: '+r.missing.map(esc).join('<br>')+'</p>':'';
+  const bt=r.batches.length?'<details class="bmore"><summary>지난 묶음 '+r.batches.length+'개</summary>'+r.batches.map(b=>'<div class="bcand"><div class="bci"><span class="tel">'+esc(b.batch)+'</span> <span class="meta">'+esc(b.at.slice(5))+' · 주문 '+b.orders+' · '+b.lines+'줄 · '+esc(Object.keys(b.state).map(k=>k+' '+b.state[k]).join(', '))+'</span></div>'
+      +'<button type="button" class="btn ghost sm" data-erp-get="'+esc(b.batch)+'">다시 받기</button>'+(b.state['엑셀만듦']?' <button type="button" class="btn ghost sm" data-erp-cx="'+esc(b.batch)+'">안 올림(취소)</button>':'')+'</div>').join('')+'</details>':'';
+  modal('<h3>아마란스 주문등록 엑셀</h3><p class="meta">입금 확인된 지인·임직원 주문'+(r.from?' (입금 '+esc(r.from)+' 부터)':'')+' · 주문 <b>'+L.length+'</b>건 · '+lines+'줄 · '+won(sum)+'</p>'+list+miss
+    +'<p class="mnote">만든 파일을 아마란스(<b>회사: 워터비스코퍼레이션</b> 확인) <b>영업관리 › 주문등록 › 엑셀업로드</b>에 올립니다. 한 번 만든 주문은 다음에 안 나옵니다. 못 올렸으면 «지난 묶음»에서 [안 올림(취소)].</p>'+bt,
+    L.length&&!r.missing.length?'엑셀 만들기 ('+L.length+'건)':'닫기',
+    async()=>{ if(!L.length||r.missing.length) return; const m=await api('opsErpMake',{}); await erpFile(m.rows,m.batch); toast('주문 '+m.orders+'건 · '+m.rows.length+'줄 — 아마란스에 올려 주세요'); });
+}
+$('erpBtn').onclick=erpOpen;
+$('mbox').addEventListener('click',async e=>{ const g=e.target.closest('[data-erp-get]'), c=e.target.closest('[data-erp-cx]'); if(!g&&!c) return;
+  e.preventDefault(); const b=(g||c).dataset[g?'erpGet':'erpCx']; (g||c).disabled=true;
+  try{ if(g){ const r=await api('opsErpBatch',{batch:b,act:'get'}); await erpFile(r.rows,b+'_다시'); toast(b+' 다시 받음'); }
+       else { const r=await api('opsErpBatch',{batch:b,act:'cancel'}); toast(r.canceled+'줄 취소 — 다시 목록에 나옵니다'); $('modal').classList.add('hidden'); erpOpen(); } }
+  catch(err){ toast(err.message); (g||c).disabled=false; } });
 
 /* ── 확인창 ── */
 function modal(html,yes,fn){
