@@ -399,7 +399,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
       <div id="qBody"></div>
     </section>
 
-    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.6</span> · 033-672-1032 · admin@watervis.co.kr</p>
+    <p class="foot">워터비스코퍼레이션(주) 경영관리실 · 업무포털 <span id="ver">v0.4.7</span> · 033-672-1032 · admin@watervis.co.kr</p>
   </main>
 </div>
 
@@ -412,7 +412,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8p
    · v0.3 — 첫 화면 = 업무포털(오늘 할 일 + 카드). 임직원 주문은 buy/ (같은 로그인)
    · 로그인 토큰은 이 탭의 sessionStorage(탭을 닫으면 사라짐) — 포털 ↔ 임직원 주문 사이 다시 로그인하지 않게. 30분 무활동이면 로그아웃
    · 고객 정보가 나오는 화면 — 공용 PC 에서는 꼭 로그아웃 */
-const VERSION='ops-v0.4.6';
+const VERSION='ops-v0.4.7';
 const API_URL='https://script.google.com/macros/s/AKfycby2u_oD8QlsYJj3fnSBsvO8bzUeiqZLuR1X7o3LAnhaHYdsWRJOo6tN9UweLoOma0G5/exec';
 const IDLE_MS=30*60*1000;
 const HANJIN='https://www.hanjin.com/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=MN038&schLang=KR&wblnumText2=';
@@ -840,15 +840,15 @@ $('qBody').addEventListener('click',async e=>{
    공유 PC 가 12:40 에 통장 입금을 드라이브에 두면 서버가 12:30~13:30 5분마다 가져와 짝을 맞춘다.
    확실한 것(금액·이름 같음, 양쪽 하나뿐)은 자동 입금 확인. 여기에는 담당자가 확인할 것만 나온다.
    직원(입금): 짝 후보가 있는 입금만 / 대표(통장): 짝 없는 입금·[제외]·[되돌리기]까지 */
-let BK=null, bankBusy=false, BKR=null, BKOPEN=false;
+let BK=null, bankBusy=false, BKR=null, BKOPEN=false, BKOFF=false;
 $('bkMore').onclick=()=>{ BKOPEN=!BKOPEN; paintBankList(); if(!BKOPEN) $('bkBox').scrollIntoView({block:'nearest'}); };
 const LV={2:['이름 같음','ok'],1:['이름 비슷함','wait'],0:['이름 다름','no']};
-const BST={'자동확인':['자동 확인','ok'],'직원확인':['담당자 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
+const BST={'보류':['보류','wait'],'자동확인':['자동 확인','ok'],'직원확인':['담당자 확인','ok'],'확인끝':['이미 확인된 주문','ok'],'제외':['제외 (영업 아님)','no'],'영업아님':['영업 아님 (자동)','no'],'대기':['대기','wait']};
 const dt=d=>esc(d.day.slice(5))+' '+esc(d.time);
 async function loadBank(){
   if(bankBusy) return; bankBusy=true;
   if(!BK) $('bBody').innerHTML='<p class="load">불러오는 중…</p>';
-  try{ BK=await api('opsBank',BKR||{}); BANKN=BK.todo.length; setCnt('cBank',BANKN); if(BK.range){ $('bkFrom').value=BK.range.from; $('bkTo').value=BK.range.to; } paintBankList(); paintBank(); }
+  try{ BK=await api('opsBank',Object.assign({},BKR||{},{showOff:BKOFF})); BANKN=BK.todo.length; setCnt('cBank',BANKN); if(BK.range){ $('bkFrom').value=BK.range.from; $('bkTo').value=BK.range.to; } paintBankList(); paintBank(); }
   catch(e){ $('bBody').innerHTML=''; showErr(e.message); }
   finally{ bankBusy=false; }
 }
@@ -871,6 +871,9 @@ function paintBank(){
   if(P.boss){
     out.push('<div class="h3">짝이 없는 입금 <span class="meta">'+(P.none||[]).length+'건 · 대표님만 보입니다</span></div>');
     out.push((P.none||[]).length?P.none.map(noneCard).join(''):'<p class="empty">짝이 없는 입금이 없습니다.</p>');
+    if((P.hold||[]).length) out.push('<div class="h3">보류 중 <span class="meta">'+P.hold.length+'건 · 선수금 등 나중에 주문에 연결할 돈 · 대표님만 보입니다</span></div>'
+      +P.hold.map(d=>'<div class="card bcard"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · '+esc(d.memo||'')+'</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
+        +'<p class="bwhy">보류: '+esc(d.note)+' · '+esc(d.at.slice(5))+'</p><div class="cbtn"><button type="button" class="btn ghost sm" data-restore="'+esc(d.key)+'">되돌리기 (다시 짝 맞추기)</button></div></div>').join(''));
   }
   const D=P.done||[];
   out.push('<details class="more"'+(D.length&&!P.todo.length?' open':'')+'><summary>처리된 입금 (최근 14일'+(P.boss?' · 제외 전부':'')+' '+D.length+'건)</summary>'
@@ -883,11 +886,11 @@ function paintBank(){
   $('bBody').innerHTML=out.join('');
 }
 const bkSrc=d=>(d.memo?' · '+esc(d.memo):'')+(d.seq?' · 순번 '+esc(d.seq):'')+(d.slip?' · 아마란스 '+esc(d.slip):'')+(d.got?' · '+esc(d.got.slice(5))+' 가져옴':'');
-const BKK={done:null, plan:['자동 확인 예정','auto'], todo:['확인 필요','wait'], none:['짝 없음','no'], off:null};
+const BKK={done:null, plan:['자동 확인 예정','auto'], todo:['확인 필요','wait'], none:['짝 없음','no'], hold:['보류','wait'], off:['영업 아님','no']};
 /* 통장 입금 내역 (v0.4.1) — 날짜로 조회, 상자 안에서 스크롤. 서버가 주문 입금으로 보이는 줄만 보낸다 */
 function paintBankList(){
   const L=BK.list||[];
-  if(!L.length){ $('bkMore').classList.add('hidden'); $('bkBox').innerHTML='<p class="empty" style="margin:0;border:0">이 기간에 주문 입금이 없습니다.</p>'; $('bkSum').textContent=''; return; }
+  if(!L.length){ $('bkMore').classList.add('hidden'); $('bkBox').innerHTML='<p class="empty" style="margin:0;border:0">이 기간에 주문 입금이 없습니다.</p>'; $('bkSum').innerHTML=BK.boss?'<label class="mchk" style="display:inline-flex;margin:0"><input type="checkbox" id="bkOff"'+(BKOFF?' checked':'')+'> 영업 아닌 돈·보류도 보기 ('+(BK.offN||0)+'건 · 대표님만)</label>':''; return; }
   $('bkBox').innerHTML='<table class="btbl"><thead><tr><th>입금 일시</th><th>입금자</th><th class="n">금액</th><th>방법</th><th>결과</th><th>주문</th></tr></thead><tbody>'
     +L.map(d=>{ const k=BKK[d.kind], s=k||BST[d.status]||[d.status,'wait'];
       const res='<span class="st '+s[1]+'">'+esc(s[0])+'</span>'+(d.kind==='done'&&d.by?'<small>'+esc(d.by)+'</small>':'');
@@ -898,8 +901,9 @@ function paintBankList(){
   box.classList.toggle('many',many&&!BKOPEN); box.classList.toggle('open',BKOPEN);
   more.classList.toggle('hidden',!many); more.textContent=BKOPEN?'▲ 접기':'▼ 전체 '+L.length+'건 펼치기 (지금 상자 안에서 위로 밀어도 보입니다)';
   const sum=L.filter(d=>d.kind!=='off'&&d.kind!=='none').reduce((a,d)=>a+d.amount,0), n=k=>L.filter(d=>d.kind===k).length;
-  $('bkSum').innerHTML='<b>'+L.length+'건</b> · '+esc(BK.range.from.slice(5))+' ~ '+esc(BK.range.to.slice(5))+' · 주문 입금 합계 <b>'+won(sum)+'</b> · 짝 끝남 '+n('done')+' · 확인 필요 '+(n('todo')+n('plan'))+(BK.boss?' · <span class="meta">대표님 화면에는 짝 없는 입금·제외한 돈도 보입니다 (직원 화면에는 안 보임)</span>':'');
+  $('bkSum').innerHTML='<b>'+L.length+'건</b> · '+esc(BK.range.from.slice(5))+' ~ '+esc(BK.range.to.slice(5))+' · 주문 입금 합계 <b>'+won(sum)+'</b> · 짝 끝남 '+n('done')+' · 확인 필요 '+(n('todo')+n('plan'))+(BK.boss?'<br><label class="mchk" style="display:inline-flex;margin:4px 0 0"><input type="checkbox" id="bkOff"'+(BKOFF?' checked':'')+'> 영업 아닌 돈·보류도 보기 ('+(BK.offN||0)+'건 · 대표님만)</label>':'');
 }
+$('bkSum').addEventListener('change',e=>{ if(e.target.id==='bkOff'){ BKOFF=e.target.checked; loadBank(); } });
 $('bkBox').addEventListener('click',e=>{ const t=e.target.closest('[data-jump]'); if(!t) return; const c=document.getElementById('bk-'+t.dataset.jump);
   if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('flash'); setTimeout(()=>c.classList.remove('flash'),1600); } });
 const bkQuick=q=>{ const t=ymd(new Date()), back=n=>ymd(new Date(Date.now()-n*864e5));
@@ -925,12 +929,12 @@ function bankCard(d){
 function noneCard(d){
   return '<div class="card bcard"><div class="bhead"><div><div class="meta">'+dt(d)+' 입금 · '+esc(d.memo||'')+(d.slip?' · 아마란스 '+esc(d.slip):'')+'</div><div class="pname">'+esc(d.name)+'</div></div><div class="pamt">'+won(d.amount)+'</div></div>'
     +(d.note?'<p class="bwhy">'+esc(d.note)+'</p>':'')
-    +'<div class="cbtn"><button type="button" class="btn ghost sm" data-excl="'+esc(d.key)+'">제외 — 영업 아님</button>'
+    +'<div class="cbtn"><button type="button" class="btn ghost sm" data-excl="'+esc(d.key)+'">제외 — 영업 아님</button><button type="button" class="btn ghost sm" data-hold="'+esc(d.key)+'">보류 — 나중에 연결</button>'
     +'<span class="wbin"><input placeholder="주문번호 (예: F261012-003)" data-link="'+esc(d.key)+'" maxlength="12"><button type="button" class="btn pri sm" data-linkgo="'+esc(d.key)+'">이 주문에 연결</button></span></div></div>';
 }
-function bankFind(k){ const B=BK||{}; return (B.todo||[]).concat(B.none||[],B.done||[]).find(x=>x.key===k); }
+function bankFind(k){ const B=BK||{}; return (B.todo||[]).concat(B.none||[],B.done||[],B.hold||[],B.list||[]).find(x=>x.key===k); }
 $('bBody').addEventListener('click',e=>{
-  const t=e.target.closest('[data-pick],[data-excl],[data-restore],[data-linkgo]'); if(!t) return;
+  const t=e.target.closest('[data-pick],[data-excl],[data-hold],[data-restore],[data-linkgo]'); if(!t) return;
   const D=t.dataset;
   if(D.pick||D.linkgo){
     const [k,no0]=D.pick?D.pick.split('|'):[D.linkgo,''], d=bankFind(k); if(!d) return;
@@ -949,6 +953,12 @@ $('bBody').addEventListener('click',e=>{
       +'<input id="mMemo" placeholder="메모 (선택)"><p class="mnote">지우지 않습니다. 직원 화면에 안 보이게만 하고, 언제든 [되돌리기] 할 수 있습니다.</p>','제외',
       async()=>{ const w=$('mWhy').value; if(!w) throw new Error('사유를 골라 주세요'); const m=$('mMemo').value.trim();
         await api('opsBankSet',{key:d.key, act:'exclude', reason:w+(m?' · '+m:'')}); toast('제외했습니다.'); await loadBank(); }); }
+  if(D.hold){ const d=bankFind(D.hold); if(!d) return;
+    return modal('<h3>보류 — 나중에 주문에 연결</h3><div class="big">'+esc(d.name)+'</div><div class="big">'+won(d.amount)+'</div><p class="meta">'+dt(d)+' 입금</p>'
+      +'<select id="mWhy" class="inp" style="width:100%;margin-top:10px"><option value="">사유를 골라 주세요</option><option>선수금 (나중에 주문에 연결)</option><option>확인 중</option><option>기타</option></select>'
+      +'<input id="mMemo" placeholder="메모 (선택) 예: 새론 10월 납품분"><p class="mnote">담당자 화면에는 안 보이고 «보류 중»에 남습니다. 주문이 생기면 [되돌리기] 뒤 그 주문에 연결하시면 됩니다.</p>','보류',
+      async()=>{ const w=$('mWhy').value; if(!w) throw new Error('사유를 골라 주세요'); const m=$('mMemo').value.trim();
+        await api('opsBankSet',{key:d.key, act:'hold', reason:w+(m?' · '+m:'')}); toast('보류했습니다.'); await loadBank(); }); }
   if(D.restore){ const d=bankFind(D.restore); if(!d) return;
     return modal('<h3>되돌리기</h3><p><b>'+esc(d.name)+'</b> '+won(d.amount)+' · '+dt(d)+'</p><p class="mnote">«대기»로 돌아가 다시 주문과 짝을 맞춥니다.</p>','되돌리기',
       async()=>{ await api('opsBankSet',{key:d.key, act:'restore'}); toast('되돌렸습니다.'); await loadBank(); }); }
