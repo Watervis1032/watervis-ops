@@ -381,6 +381,23 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
 #swarn{position:fixed;inset:0;z-index:97;background:rgba(3,16,31,.55);display:flex;align-items:center;justify-content:center;padding:20px}
 #swarn .cbox{border-radius:18px;max-width:420px}
 #swarn .big{font-size:22px;font-weight:800;color:#b35a00;margin:6px 0 10px}
+
+/* v2026-10-17 법정 안내 (통신판매업 신고 뒤) */
+footer a.flink{color:#c9d6e6;text-decoration:underline;text-underline-offset:3px}
+footer .flinks{margin:6px 0 2px}
+.prechk{font-size:12.5px;color:var(--muted);text-align:center;margin:0 0 10px}
+.prechk button{background:none;border:0;padding:0;color:var(--navy2);font-size:12.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#pol{position:fixed;inset:0;z-index:98;background:rgba(3,16,31,.55);display:flex;align-items:flex-end;justify-content:center}
+#pol .cbox{max-height:90svh}
+#pol .ptabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+#pol .ptabs button{border:1px solid #d6dde6;background:#fff;border-radius:99px;padding:7px 12px;font-size:13.5px;cursor:pointer;color:#3b4b5e}
+#pol .ptabs button.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+#pol .ptxt{font-size:13.5px;color:#2b3a4c;line-height:1.7}
+#pol .ptxt h4{font-size:14.5px;color:var(--navy);margin:14px 0 4px}
+#pol .ptxt ol,#pol .ptxt ul{padding-left:20px;margin:4px 0}
+#pol .ptxt p{margin:4px 0}
+#pol .ptxt .muted{color:var(--muted);font-size:12.5px}
+#pol .pclose{width:100%;margin-top:16px;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -544,6 +561,7 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
         </table>
       </details>
 
+      <p class="prechk">주문 전에 <button type="button" onclick="openPol('ret')">교환·반품·환불 안내</button>와 <button type="button" onclick="openPol('terms')">이용약관</button>을 확인해 주세요.</p>
       <ul class="errs" id="errs"></ul>
       <button class="submit" id="submit">주문 신청하기</button>
       <p class="fine">주문 후 안내되는 계좌로 3일 안에 입금해 주시면 확인 후 발송해 드립니다.</p>
@@ -734,6 +752,22 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
   </div>
 </section>
 
+
+<!-- ═════════ 이용약관 · 교환·반품·환불 · 개인정보 (2026-10-17) ═════════ -->
+<div id="pol" class="hidden" role="dialog" aria-label="이용 안내">
+  <div class="cbox">
+    <h3 id="polT">이용 안내</h3>
+    <div class="ptabs" id="polTabs">
+      <button type="button" data-p="ret">교환·반품·환불</button>
+      <button type="button" data-p="terms">이용약관</button>
+      <button type="button" data-p="priv">개인정보 처리방침</button>
+      <button type="button" data-p="biz">사업자 정보</button>
+    </div>
+    <div class="ptxt" id="polBody"></div>
+    <button type="button" class="pclose" onclick="closePol()">닫기</button>
+  </div>
+</div>
+
 <div id="postLayer" class="hidden" role="dialog" aria-label="주소 찾기">
   <div class="postwrap">
     <div class="posthead"><b>주소 찾기</b><button type="button" id="postClose" aria-label="닫기">닫기 ✕</button></div>
@@ -744,11 +778,13 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
 <footer id="foot" class="hidden">
   <img class="flogo" src="https://watervis.co.kr/order/img/logo-watervis-white.png" alt="WATERVIS" width="150" height="33">
   워터비스코퍼레이션(주) · 대표 김인호<br>
-  사업자등록번호 682-87-03964 · 통신판매업 신고번호 <span id="mailOrderNo">신고 후 기재</span><br>
+  사업자등록번호 682-87-03964 · 통신판매업 신고 <span id="mailOrderNo">제2026-강원양양-0108호</span> <a class="flink" href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=6828703964" target="_blank" rel="noopener">사업자정보 확인</a><br>
   강원특별자치도 양양군 현남면 원포1길 53, 환경동 1층<br>
-  Tel 033-672-1032 · admin@watervis.co.kr<br>
+  Tel 033-672-1032 · admin@watervis.co.kr · 개인정보 보호책임자 경영관리실<br>
+  호스팅 서비스 제공자 GitHub, Inc. · Google LLC<br>
+  <span class="flinks"><button type="button" class="flink" onclick="openPol('terms')">이용약관</button> · <button type="button" class="flink" onclick="openPol('priv')"><b>개인정보 처리방침</b></button> · <button type="button" class="flink" onclick="openPol('ret')">교환·반품·환불</button></span><br>
   <button type="button" class="flink" onclick="openAsk()">문의하기</button> · <button type="button" class="flink auth" onclick="openMine()">내 주문</button> · <button type="button" class="flink auth" onclick="logout()">로그아웃</button><br>
-  <span style="opacity:.7">© 2026 WATERVIS CO., LTD. · 임직원 화면 <span id="ver">v0.5.3</span></span>
+  <span style="opacity:.7">© 2026 WATERVIS CO., LTD. · 임직원 화면 <span id="ver">v0.5.4</span></span>
 </footer>
 
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
@@ -765,7 +801,7 @@ footer .flogo{width:150px;height:auto;margin:0 auto 12px;opacity:.9}
    · v0.3.6: 입금하실 분을 받는 곳마다 «임직원(주문자)·받는 분·기타»로 고름. 여러 명 붙여넣기 뺌
    · v0.3.5: 받는 곳마다 입금자(다르면 입금자별로 주문이 나뉨)
    · v0.3.4: 받는 분 입력이 기본(«내 정보로 채우기» 버튼), 받는 곳 여러 개, 여러 명 붙여넣기, 주문 확인창 */
-const VERSION='buy-v0.5.3';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
+const VERSION='buy-v0.5.4';   // v0.5.0: ops.watervis.co.kr/buy — 업무포털과 같은 로그인(탭 세션), ‹ 업무포털, #free #mine
 const SK='wvops';
 const ss={get(){ try{ return sessionStorage.getItem(SK); }catch(_){ return null; } }, set(v){ try{ if(v) sessionStorage.setItem(SK,v); else ['','_u','_b','_me'].forEach(k=>sessionStorage.removeItem(SK+k)); }catch(_){} }};
 /* v0.3.5 화면 옮길 때 기다리지 않게 — 이 탭에만 잠깐 기억 (탭을 닫거나 로그아웃하면 지움). 서버 확인은 뒤에서 */
@@ -1472,6 +1508,61 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   if((location.hash||'')==='#ask') openAsk();
 });
+
+/* ── 이용약관 · 교환·반품·환불 · 개인정보 처리방침 (2026-10-17, 통신판매업 신고 제2026-강원양양-0108호) ── */
+const POL={
+ ret:['교환·반품·환불 안내',`
+<h4>단순 변심 (마음이 바뀐 경우)</h4>
+<ul><li>상품을 <b>받은 날부터 7일 안</b>에 반품을 신청하실 수 있습니다.</li>
+<li>반품 택배비(왕복)는 고객님이 부담합니다. 공장 방문 수령 상품은 공장으로 가져와 주시면 됩니다.</li>
+<li>뜯거나 드셔서 가치가 크게 줄어든 파우치는 반품되지 않습니다. 상품 확인을 위해 상자만 연 경우는 반품됩니다.</li></ul>
+<h4>상품이 안내와 다르거나 파손·누수 등 문제가 있는 경우</h4>
+<ul><li><b>받은 날부터 3개월 안</b>, 그 사실을 아신 날(또는 알 수 있었던 날)부터 <b>30일 안</b>에 교환·반품을 신청하실 수 있습니다.</li>
+<li>이때 택배비는 모두 회사가 부담합니다. 상태가 보이는 사진을 함께 보내 주시면 빠르게 처리됩니다.</li></ul>
+<h4>신청 방법</h4>
+<p>화면 아래 <b>[문의하기] → 교환·반품</b>으로 주문번호와 함께 남겨 주시거나, 033-672-1032 · admin@watervis.co.kr 로 연락 주세요.</p>
+<h4>취소와 환불</h4>
+<ul><li>입금 전: 언제든 취소하실 수 있습니다 (입금하지 않으시면 3일 뒤 자동으로 취소될 수 있습니다).</li>
+<li>입금 후 발송 전: 취소하시면 전액 환불해 드립니다.</li>
+<li>반품: 돌려보내신 상품을 받은 날부터 <b>3영업일 안</b>에 입금하신 계좌로 환불해 드립니다. 늦어지면 늦어진 기간만큼 연 15%의 지연이자를 더해 드립니다.</li>
+<li>입금을 받았는데 상품을 보내 드릴 수 없게 되면 바로 알려 드리고, 입금받은 날부터 3영업일 안에 환불해 드립니다.</li></ul>
+<p class="muted">그 밖의 교환·보상 기준은 공정거래위원회 고시 「소비자분쟁해결기준」을 따릅니다. 미성년자가 법정대리인의 동의 없이 주문한 경우 본인 또는 법정대리인이 주문을 취소할 수 있습니다.</p>`],
+ terms:['이용약관',`
+<p class="muted">시행일 2026년 10월 17일 · 워터비스코퍼레이션(주)</p>
+<h4>제1조 (목적)</h4><p>이 약관은 워터비스코퍼레이션(주)(이하 «회사»)가 운영하는 __WHO__에서 상품을 사고팔 때 회사와 고객의 권리와 의무를 정합니다.</p>
+<h4>제2조 (회사 정보)</h4><p>상호 워터비스코퍼레이션(주) · 대표 김인호 · 사업자등록번호 682-87-03964 · 통신판매업 신고 제2026-강원양양-0108호 · 강원특별자치도 양양군 현남면 원포1길 53, 환경동 1층 · 033-672-1032 · admin@watervis.co.kr</p>
+<h4>제3조 (주문과 계약)</h4><ol><li>고객이 주문서를 작성하고 [주문 신청]을 누르면 주문(청약)이 접수되며, 화면에 주문번호가 표시됩니다.</li><li>회사가 입금을 확인하면 계약이 성립합니다. 주문 후 3일 안에 입금이 없으면 주문이 취소될 수 있습니다.</li><li>재고 부족 등으로 상품을 보내 드릴 수 없으면 바로 알리고 받은 돈을 돌려드립니다.</li></ol>
+<h4>제4조 (가격과 결제)</h4><p>가격은 화면에 표시된 금액(부가세 포함)이며, 택배비는 박스당 따로 표시됩니다. 결제는 화면에 안내된 회사 명의 계좌로 이체(선입금)합니다. 현금영수증은 주문할 때 신청하실 수 있습니다.</p>
+<h4>제5조 (배송)</h4><p>입금을 확인한 날부터 3영업일 안에 한진택배로 발송하며, 보통 발송 뒤 1~2일 안에 도착합니다. 송장번호는 주문 조회에서 보실 수 있습니다. 공장 방문 수령을 고르신 경우 택배비가 없습니다.</p>
+<h4>제6조 (청약철회·교환·반품·환불)</h4><p>[교환·반품·환불 안내]에 적은 대로 하며, 「전자상거래 등에서의 소비자보호에 관한 법률」을 따릅니다.</p>
+<h4>제7조 (개인정보)</h4><p>주문에 필요한 개인정보는 [개인정보 처리방침]과 주문서의 수집·이용 동의 내용에 따라 처리합니다.</p>
+<h4>제8조 (문의와 분쟁)</h4><p>불만이나 문의는 [문의하기] 또는 전화로 받으며, 접수 후 3일 안에 답변드리도록 하겠습니다. 해결되지 않는 분쟁은 공정거래위원회 고시 「소비자분쟁해결기준」과 관계 법령에 따릅니다.</p>
+<h4>제9조 (그 밖의 일)</h4><p>이 약관에 없는 내용은 관계 법령과 상관례를 따릅니다. 약관을 바꿀 때는 시행 7일 전부터 이 화면에 알립니다.</p>`],
+ priv:['개인정보 처리방침',`
+<p class="muted">시행일 2026년 10월 17일 · 워터비스코퍼레이션(주)</p>
+<h4>1. 처리 목적</h4><p>주문 접수·입금 확인·상품 배송·현금영수증 발급·문의 답변·교환·반품 처리에만 씁니다.</p>
+<h4>2. 처리 항목</h4><p>주문하신 분·받으시는 분·입금하실 분의 성함과 연락처, 받으시는 주소, 배송 요청사항, (신청 시) 현금영수증 번호, 문의 내용과 사진. __EXTRA__</p>
+<h4>3. 보유 기간</h4><p>「전자상거래 등에서의 소비자보호에 관한 법률」에 따라 계약·청약철회·대금 결제·공급 기록은 5년, 불만·분쟁 처리 기록은 3년 보관한 뒤 지체 없이 파기합니다.</p>
+<h4>4. 제3자 제공</h4><p>상품 배송을 위해 택배사(한진)에 받으시는 분 성함·연락처·주소를 제공합니다. 그 밖에는 법령에 정해진 경우가 아니면 제공하지 않습니다.</p>
+<h4>5. 처리 위탁·보관</h4><p>주문 자료는 Google LLC(구글 워크스페이스·Apps Script) 서버에 보관되며, 주문 화면은 GitHub, Inc.를 통해 제공됩니다. 회사 담당자만 볼 수 있도록 접근을 제한합니다.</p>
+<h4>6. 파기</h4><p>보유 기간이 끝난 개인정보는 다시 살릴 수 없는 방법으로 지웁니다.</p>
+<h4>7. 정보주체의 권리</h4><p>언제든 본인 정보의 열람·정정·삭제·처리 정지를 요청하실 수 있습니다. 아래 연락처로 알려 주시면 지체 없이 처리합니다. (법령상 보관해야 하는 기록은 그 기간이 끝난 뒤 삭제합니다.)</p>
+<h4>8. 개인정보 보호책임자</h4><p>워터비스코퍼레이션(주) 경영관리실 · 033-672-1032 · admin@watervis.co.kr</p>
+<p class="muted">개인정보 침해 신고·상담: 개인정보침해신고센터(privacy.kisa.or.kr, 국번 없이 118)</p>`],
+ biz:['사업자 정보',`
+<p>상호 <b>워터비스코퍼레이션(주)</b> · 대표 김인호</p>
+<p>사업자등록번호 682-87-03964 · 통신판매업 신고 제2026-강원양양-0108호 (양양군)<br>
+<a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=6828703964" target="_blank" rel="noopener" style="color:var(--navy2)">공정거래위원회 사업자정보 확인 ›</a></p>
+<p>강원특별자치도 양양군 현남면 원포1길 53, 환경동 1층<br>Tel 033-672-1032 · admin@watervis.co.kr</p>
+<p>호스팅 서비스 제공자 GitHub, Inc. (주문 화면) · Google LLC (주문 처리)</p>`]
+};
+function openPol(k){ if(!POL[k]) k='ret';
+  $('polT').textContent=POL[k][0]; $('polBody').innerHTML=POL[k][1].replace('__WHO__','임직원 주문 화면(ops.watervis.co.kr/buy)').replace('__EXTRA__','임직원 주문은 직원 계정의 성함·휴대폰 번호·소속을 함께 씁니다.');
+  $('polTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.p===k));
+  $('pol').classList.remove('hidden'); document.body.style.overflow='hidden'; $('pol').querySelector('.cbox').scrollTop=0; }
+function closePol(){ $('pol').classList.add('hidden'); document.body.style.overflow=''; }
+$('polTabs').addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(b) openPol(b.dataset.p); });
+$('pol').addEventListener('click',e=>{ if(e.target.id==='pol') closePol(); });
 
 let tt; function toast(m){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}t.textContent=m;clearTimeout(tt);tt=setTimeout(()=>t.remove(),3000);}
 </script>
